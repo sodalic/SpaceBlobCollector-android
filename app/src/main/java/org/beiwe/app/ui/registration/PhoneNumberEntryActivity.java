@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class PhoneNumberEntryActivity extends RunningBackgroundServiceActivity {
 	private EditText primaryCarePhone;
@@ -24,23 +25,51 @@ public class PhoneNumberEntryActivity extends RunningBackgroundServiceActivity {
 		passwordResetPhone = (EditText) findViewById(R.id.passwordResetNumber);
 
 		TextFieldKeyboard textFieldKeyboard = new TextFieldKeyboard( getApplicationContext() );
-		textFieldKeyboard.makeKeyboardBehave(primaryCarePhone);
-		textFieldKeyboard.makeKeyboardBehave(passwordResetPhone);
+
+		if(PersistentData.getCallClinicianButtonEnabled()) {
+			textFieldKeyboard.makeKeyboardBehave(primaryCarePhone);
+		}
+		else {
+			TextView primaryCarePhoneText = (TextView) findViewById(R.id.primaryCareNumberLabel);
+			primaryCarePhoneText.setVisibility(View.GONE);
+			primaryCarePhone.setVisibility(View.GONE);
+		}
+
+		if(PersistentData.getCallResearchAssistantButtonEnabled()) {
+			textFieldKeyboard.makeKeyboardBehave(passwordResetPhone);
+		}
+		else{
+			TextView passwordResetPhoneText = (TextView) findViewById(R.id.passwordResetNumberLabel);
+			passwordResetPhoneText.setVisibility(View.GONE);
+			passwordResetPhone.setVisibility(View.GONE);
+		}
 	}
 	
 	public void checkAndPromptConsent(View view) {
 		String primary = primaryCarePhone.getText().toString().replaceAll("\\D+", "");
 		String reset = passwordResetPhone.getText().toString().replaceAll("\\D+", "");
-		
-		if (primary == null || primary.length() == 0 || reset == null || reset.length() == 0 ){
-			AlertsManager.showAlert( getString(R.string.enter_phone_numbers), this );
-			return;
+
+		if(PersistentData.getCallClinicianButtonEnabled()) {
+			if (primary == null || primary.length() == 0){
+				AlertsManager.showAlert( getString(R.string.enter_clinician_number), this );
+				return;
+			}
+			if (primary.length() != phoneNumberLength){
+				AlertsManager.showAlert( String.format( getString(R.string.phone_number_length_error), phoneNumberLength), this );
+				return;
+			}
 		}
-		if (primary.length() != phoneNumberLength || reset.length() != phoneNumberLength){
-			AlertsManager.showAlert( String.format( getString(R.string.phone_number_length_error), phoneNumberLength), this );
-			return;
+		if(PersistentData.getCallResearchAssistantButtonEnabled()) {
+			if (reset == null || reset.length() == 0 ){
+				AlertsManager.showAlert( getString(R.string.enter_research_assitant_number), this );
+				return;
+			}
+			if (reset.length() != phoneNumberLength){
+				AlertsManager.showAlert( String.format( getString(R.string.phone_number_length_error), phoneNumberLength), this );
+				return;
+			}
 		}
-		
+
 		PersistentData.setPrimaryCareNumber(primary);
 		PersistentData.setPasswordResetNumber(reset);
 		startActivity(new Intent(getApplicationContext(), ConsentFormActivity.class));

@@ -184,8 +184,8 @@
 
     <!-- Phone Numbers -->
     <string name="phone_number_length_error"> "Phone numbers must be exactly %d digits long." </string>
-    <string name="enter_phone_numbers">You must enter values for the two phone numbers above </string>
-
+    <string name="enter_clinician_number">You must enter a value for the clinician phone </string>
+    <string name="enter_research_assitant_number">You must enter a value for the research assistant phone </string>
     <!-- Consent Form -->
     <string name="title_activity_consent_form">Consent Form</string>
     <string name="consentButton">I consent</string>

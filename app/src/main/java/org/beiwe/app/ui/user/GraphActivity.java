@@ -8,6 +8,7 @@ import org.beiwe.app.storage.PersistentData;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -34,9 +35,14 @@ public class GraphActivity extends SessionActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_graph);
-		
+
 		Button callClinicianButton = (Button) findViewById(R.id.graph_call_clinician);
-		callClinicianButton.setText(PersistentData.getCallClinicianButtonText());
+		if(PersistentData.getCallClinicianButtonEnabled()) {
+			callClinicianButton.setText(PersistentData.getCallClinicianButtonText());
+		}
+		else {
+			callClinicianButton.setVisibility(View.GONE);
+		}
 
 		// Instantiating web view to be embedded in the page
 		WebView browser = (WebView) findViewById(R.id.graph_pastResults);

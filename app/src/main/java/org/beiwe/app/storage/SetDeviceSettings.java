@@ -75,5 +75,16 @@ public class SetDeviceSettings {
 		try { useGpsFuzzing = deviceSettings.getBoolean("use_gps_fuzzing"); }
 		catch (JSONException e) { useGpsFuzzing = false; }
 		PersistentData.setUseGpsFuzzing(useGpsFuzzing);
+
+		// Call button toggles
+		boolean callClinicianButtonEnabled;
+		try { callClinicianButtonEnabled = deviceSettings.getBoolean("call_clinician_button_enabled"); }
+		catch (JSONException e) { callClinicianButtonEnabled = true; }
+		PersistentData.setCallClinicianButtonEnabled(callClinicianButtonEnabled);
+
+		boolean callResearchAssistantButtonEnabled;
+		try { callResearchAssistantButtonEnabled = deviceSettings.getBoolean("call_research_assistant_button_enabled"); }
+		catch (JSONException e) { callResearchAssistantButtonEnabled = true; }
+		PersistentData.setCallResearchAssistantButtonEnabled(callResearchAssistantButtonEnabled);
 	}
 }

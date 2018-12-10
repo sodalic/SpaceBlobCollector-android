@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 
@@ -32,6 +33,11 @@ public class LoginActivity extends RunningBackgroundServiceActivity {
 
 		setContentView(R.layout.activity_login);
 		password = (EditText) findViewById(R.id.editText2);
+
+		Button callResearchAssistantButton = (Button) findViewById(R.id.forgot_password_button);
+		if(!PersistentData.getCallResearchAssistantButtonEnabled()) {
+			callResearchAssistantButton.setVisibility(View.GONE);
+		}
 		
 		TextFieldKeyboard textFieldKeyboard = new TextFieldKeyboard(appContext);
 		textFieldKeyboard.makeKeyboardBehave(password);

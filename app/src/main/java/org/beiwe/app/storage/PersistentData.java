@@ -540,4 +540,27 @@ public class PersistentData {
 	private static boolean getUseGpsFuzzing() {
 		return pref.getBoolean(USE_GPS_FUZZING_KEY, false);
 	}
+
+	/*###########################################################################################
+	###################################### Call Buttons #########################################
+	###########################################################################################*/
+
+	private static final String CALL_CLINICIAN_BUTTON_ENABLED_KEY = "call_clinician_button_enabled";
+	private static final String CALL_RESEARCH_ASSISTANT_BUTTON_ENABLED_KEY = "call_research_assistant_button_enabled";
+
+	public static boolean getCallClinicianButtonEnabled() {
+		return pref.getBoolean(CALL_CLINICIAN_BUTTON_ENABLED_KEY, false);
+	}
+
+	public static void setCallClinicianButtonEnabled(boolean enabled) {
+		editor.putBoolean(CALL_CLINICIAN_BUTTON_ENABLED_KEY, enabled);
+	}
+
+	public static boolean getCallResearchAssistantButtonEnabled() {
+		return pref.getBoolean(CALL_RESEARCH_ASSISTANT_BUTTON_ENABLED_KEY, false);
+	}
+
+	public static void setCallResearchAssistantButtonEnabled(boolean enabled) {
+		editor.putBoolean(CALL_RESEARCH_ASSISTANT_BUTTON_ENABLED_KEY, enabled);
+	}
 }

@@ -83,7 +83,16 @@ public class SessionActivity extends RunningBackgroundServiceActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.logged_in_menu, menu);
-		menu.findItem(R.id.menu_call_clinician).setTitle(PersistentData.getCallClinicianButtonText());
+		if(PersistentData.getCallClinicianButtonEnabled()) {
+			menu.findItem(R.id.menu_call_clinician).setTitle(PersistentData.getCallClinicianButtonText());
+		}
+		else {
+			menu.findItem(R.id.menu_call_clinician).setVisible(false);
+		}
+
+		if(!PersistentData.getCallResearchAssistantButtonEnabled()) {
+			menu.findItem(R.id.menu_call_research_assistant).setVisible(false);
+		}
 		return true;
 	}
 
