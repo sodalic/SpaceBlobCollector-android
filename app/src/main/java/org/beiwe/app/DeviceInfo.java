@@ -65,7 +65,9 @@ public class DeviceInfo {
 	 * 32: app version 2.4.1, Fixes survey notification crash on Android 4,
 	 * 		prevent crash in phone call logger,
 	 * 		protect against crash in MMS logger
-	 * 33: app version 2.4.2, Fuzzes/anonymizes GPS data for studies on servers that enable it	*/
+	 * 33: app version 2.4.2, Fuzzes/anonymizes GPS data for studies on servers that enable it
+	 * 34: app version 2.4.3, Removes "Call My Clinician" and "Call Research Assistant" button
+	 *      for studies that have those set in App Settings. Defaults to showing the buttons.  */
 
 	private static String androidID;
 	private static String bluetoothMAC;
