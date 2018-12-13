@@ -83,7 +83,7 @@
 
     <!-- Forgot Password Activity Strings -->
     <string name="title_activity_forgot_password">Forgot Password</string>
-    <string name="forgot_password_title">Call the research assistant to get a temporary password</string>
+    <string name="forgot_password_title">Contact the research assistant to get a temporary password</string>
     <string name="forgot_password_title_with_id">Call the research assistant to get a temporary password. Your ID is \"%s\".</string>
     <string name="forgot_password_instructions_text">Your ID is \"%s\"; please identify yourself by that ID and not by your name.</string>
     <string name="forgot_password_call_button_text">Call research assistant</string>

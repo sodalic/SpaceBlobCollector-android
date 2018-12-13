@@ -34,11 +34,6 @@ public class LoginActivity extends RunningBackgroundServiceActivity {
 		setContentView(R.layout.activity_login);
 		password = (EditText) findViewById(R.id.editText2);
 
-		Button callResearchAssistantButton = (Button) findViewById(R.id.forgot_password_button);
-		if(!PersistentData.getCallResearchAssistantButtonEnabled()) {
-			callResearchAssistantButton.setVisibility(View.GONE);
-		}
-		
 		TextFieldKeyboard textFieldKeyboard = new TextFieldKeyboard(appContext);
 		textFieldKeyboard.makeKeyboardBehave(password);
 	}
