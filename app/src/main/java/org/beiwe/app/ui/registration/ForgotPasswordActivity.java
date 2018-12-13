@@ -2,6 +2,7 @@ package org.beiwe.app.ui.registration;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -38,6 +39,11 @@ public class ForgotPasswordActivity extends RunningBackgroundServiceActivity {
 		textFieldKeyboard.makeKeyboardBehave(tempPasswordInput);
 		textFieldKeyboard.makeKeyboardBehave(newPasswordInput);
 		textFieldKeyboard.makeKeyboardBehave(confirmNewPasswordInput);
+
+		if(!PersistentData.getCallResearchAssistantButtonEnabled()) {
+			Button callButton = (Button) findViewById(R.id.reset_password_call_button);
+			callButton.setVisibility(View.GONE);
+		}
 	}
 
 	/** Kill this activity and go back to the homepage */

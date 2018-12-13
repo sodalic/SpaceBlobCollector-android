@@ -83,7 +83,7 @@
 
     <!-- Forgot Password Activity Strings -->
     <string name="title_activity_forgot_password">Forgot Password</string>
-    <string name="forgot_password_title">Call the research assistant to get a temporary password</string>
+    <string name="forgot_password_title">Contact the research assistant to get a temporary password</string>
     <string name="forgot_password_title_with_id">Call the research assistant to get a temporary password. Your ID is \"%s\".</string>
     <string name="forgot_password_instructions_text">Your ID is \"%s\"; please identify yourself by that ID and not by your name.</string>
     <string name="forgot_password_call_button_text">Call research assistant</string>
@@ -184,8 +184,8 @@
 
     <!-- Phone Numbers -->
     <string name="phone_number_length_error"> "Phone numbers must be exactly %d digits long." </string>
-    <string name="enter_phone_numbers">You must enter values for the two phone numbers above </string>
-
+    <string name="enter_clinician_number">You must enter a value for the clinician phone </string>
+    <string name="enter_research_assitant_number">You must enter a value for the research assistant phone </string>
     <!-- Consent Form -->
     <string name="title_activity_consent_form">Consent Form</string>
     <string name="consentButton">I consent</string>
