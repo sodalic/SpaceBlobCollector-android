@@ -2,6 +2,7 @@ package org.beiwe.app.survey;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
@@ -24,6 +25,8 @@ public class MarkDownTextView extends TextView {
 		AndDown markedownConverter = new AndDown();
 		String markDownHtml = markedownConverter.markdownToHtml(markDownText);
 		super.setText( Html.fromHtml(markDownHtml) );
+		super.setMovementMethod(LinkMovementMethod.getInstance());
+
 	}
 
 	/** This should make usage trivial, just use the settext function on
