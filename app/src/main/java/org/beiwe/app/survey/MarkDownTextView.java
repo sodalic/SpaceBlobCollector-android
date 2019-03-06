@@ -22,11 +22,10 @@ public class MarkDownTextView extends TextView {
 	/** Takes a markdown formatted String and applies the formatting to the TextView object.
 	 * @param markDownText markdown formatted text string */
 	public void setMarkDownText(String markDownText) {
-		AndDown markedownConverter = new AndDown();
-		String markDownHtml = markedownConverter.markdownToHtml(markDownText);
+		AndDown markDownConverter = new AndDown();
+		String markDownHtml = markDownConverter.markdownToHtml(markDownText);
 		super.setText( Html.fromHtml(markDownHtml) );
 		super.setMovementMethod(LinkMovementMethod.getInstance());
-
 	}
 
 	/** This should make usage trivial, just use the settext function on
