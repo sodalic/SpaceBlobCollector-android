@@ -67,7 +67,8 @@ public class DeviceInfo {
 	 * 		protect against crash in MMS logger
 	 * 33: app version 2.4.2, Fuzzes/anonymizes GPS data for studies on servers that enable it
 	 * 34: app version 2.4.3, Removes "Call My Clinician" and "Call Research Assistant" button
-	 *      for studies that have those set in App Settings. Defaults to showing the buttons.  */
+	 *      for studies that have those set in App Settings. Defaults to showing the buttons.
+	 * 35: app version 2.4.4, Allow Markdown URL links to be clickable  */
 
 	private static String androidID;
 	private static String bluetoothMAC;
