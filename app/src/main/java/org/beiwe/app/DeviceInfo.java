@@ -68,7 +68,10 @@ public class DeviceInfo {
 	 * 33: app version 2.4.2, Fuzzes/anonymizes GPS data for studies on servers that enable it
 	 * 34: app version 2.4.3, Removes "Call My Clinician" and "Call Research Assistant" button
 	 *      for studies that have those set in App Settings. Defaults to showing the buttons.
-	 * 35: app version 2.4.4, Allow Markdown URL links to be clickable  */
+	 * 35: app version 2.4.4, Allow Markdown URL links to be clickable
+	 * 36: app version 2.5.0, googlePlayStore build variants no longer ask for SMS/MMS and Call Log
+	 *      permissions because of Google policy changes effective March 9th, 2019.  onnelaLabServer
+	 *      build variants still collect SMS/MMS and Call Log data.  */
 
 	private static String androidID;
 	private static String bluetoothMAC;
