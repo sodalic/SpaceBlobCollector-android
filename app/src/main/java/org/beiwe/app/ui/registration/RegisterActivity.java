@@ -185,7 +185,14 @@ public class RegisterActivity extends RunningBackgroundServiceActivity {
 	 * @return */
 	private String getPhoneNumber() {
 		TelephonyManager phoneManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-		@SuppressLint("MissingPermission") String phoneNumber = phoneManager.getLine1Number(); //We cannot reach this code without having SMS permissions.
+		String phoneNumber;
+		try {
+			// If READ_TEXT_AND_CALL_LOGS is true, we should not be able to get here without having
+			// asked for the SMS permission.  If it's false, we don't have permission to do this.
+			phoneNumber = phoneManager.getLine1Number();
+		} catch (SecurityException e) {
+			phoneNumber = "";
+		}
 		if (phoneNumber == null) { return EncryptionEngine.hashPhoneNumber(""); }
 		return EncryptionEngine.hashPhoneNumber(phoneNumber);
 	}
@@ -224,7 +231,9 @@ public class RegisterActivity extends RunningBackgroundServiceActivity {
 			thisResumeCausedByFalseActivityReturn = false;
 			return;
 		}
-		if ( !PermissionHandler.checkAccessReadSms(getApplicationContext()) && !thisResumeCausedByFalseActivityReturn) {
+		if (BuildConfig.READ_TEXT_AND_CALL_LOGS &&
+				!PermissionHandler.checkAccessReadSms(getApplicationContext()) &&
+				!thisResumeCausedByFalseActivityReturn) {
 			if (shouldShowRequestPermissionRationale(Manifest.permission.READ_SMS) ) {
 				if (!prePromptActive && !postPromptActive ) { showPostPermissionAlert(this); } 
 			}

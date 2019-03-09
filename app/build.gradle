@@ -56,18 +56,25 @@ android {
             dimension "customizableServerUrl"
             manifestPlaceholders = [appName: "Beiwe2"]
             buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", 'true')
+            buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'false')
         }
         onnelaLabServer {
             dimension "customizableServerUrl"
             manifestPlaceholders = [appName: "Beiwe"]
             buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", "false")
+            buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'true')
         }
     }
     useLibrary "org.apache.http.legacy"
+    sourceSets {
+        onnelaLabServer {
+            manifest.srcFile 'src/onnelaLabServer/AndroidManifest.xml'
+        }
+    }
 }
 // Don't include the default "debug" build variant as an option
 android.variantFilter { variant ->
-    if(variant.buildType.name.equals('debug')) {
+    if (variant.buildType.name.equals('debug')) {
         variant.setIgnore(true);
     }
 }

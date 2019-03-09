@@ -3,6 +3,7 @@ package org.beiwe.app;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -125,10 +126,10 @@ public class PermissionHandler {
 		if (PersistentData.getBluetoothEnabled()) {
 			if ( !checkAccessBluetooth(context)) return Manifest.permission.BLUETOOTH;
 			if ( !checkAccessBluetoothAdmin(context)) return Manifest.permission.BLUETOOTH_ADMIN; }
-		if (PersistentData.getCallsEnabled() ) {
+		if (PersistentData.getCallsEnabled() && BuildConfig.READ_TEXT_AND_CALL_LOGS) {
 			if ( !checkAccessReadPhoneState(context)) return Manifest.permission.READ_PHONE_STATE;  
 			if ( !checkAccessReadCallLog(context)) return Manifest.permission.READ_CALL_LOG; }
-		if (PersistentData.getTextsEnabled()) {
+		if (PersistentData.getTextsEnabled() && BuildConfig.READ_TEXT_AND_CALL_LOGS) {
 			if ( !checkAccessReadContacts(context)) return Manifest.permission.READ_CONTACTS;  
 			if ( !checkAccessReadSms(context)) return Manifest.permission.READ_SMS;
 			if ( !checkAccessReceiveMms(context)) return Manifest.permission.RECEIVE_MMS;
