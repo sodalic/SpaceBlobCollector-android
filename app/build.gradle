@@ -31,6 +31,7 @@ android {
             buildConfigField("boolean", "APP_IS_BETA", "false")
             buildConfigField("boolean", "APP_IS_DEV", "false")
             buildConfigField("String", "SENTRY_DSN", "\"" + keystoreProperties['releaseDSN'] + "\"")
+            buildConfigField("boolean", "ALLOW_INSECURE_CONNECTION", "false")
         }
         beta {
             versionNameSuffix("-beta")
@@ -39,6 +40,7 @@ android {
             buildConfigField("boolean", "APP_IS_BETA", "true")
             buildConfigField("boolean", "APP_IS_DEV", "false")
             buildConfigField("String", "SENTRY_DSN", "\"" + keystoreProperties['betaDSN'] + "\"")
+            buildConfigField("boolean", "ALLOW_INSECURE_CONNECTION", "false")
         }
         development {
             versionNameSuffix("-development")
@@ -47,6 +49,7 @@ android {
             buildConfigField("boolean", "APP_IS_BETA", "true")
             buildConfigField("boolean", "APP_IS_DEV", "true")
             buildConfigField("String", "SENTRY_DSN", "\"" + keystoreProperties['developmentDSN'] + "\"")
+            buildConfigField("boolean", "ALLOW_INSECURE_CONNECTION", "true")
             debuggable true
         }
     }

@@ -306,15 +306,20 @@ public class PersistentData {
 		if (editor == null) Log.e("LoginManager.java", "editor is null in setServerUrl()");
 		editor.putString(SERVER_URL_KEY, prependHttpsToServerUrl(serverUrl));
 		editor.commit(); }
+
 	private static String prependHttpsToServerUrl(String serverUrl) {
 		if (serverUrl.startsWith("https://")) {
 			return serverUrl;
 		} else if (serverUrl.startsWith("http://")) {
+            if (BuildConfig.ALLOW_INSECURE_CONNECTION)
+                return serverUrl;
+            else
 			return "https://" + serverUrl.substring(7, serverUrl.length());
 		} else {
 			return "https://" + serverUrl;
 		}
 	}
+
 	public static String getServerUrl() { return pref.getString(SERVER_URL_KEY, null); }
 
 	public static void setLoginCredentials( String userID, String password ) {
