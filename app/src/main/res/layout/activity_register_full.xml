@@ -1,0 +1,115 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:id="@+id/registerActivityMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context="org.beiwe.app.DeviceInfo">
+
+        <TextView
+                android:id="@+id/welcoming_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/registration_welcome_message"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_gravity="center"/>
+
+        <View
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"/>
+
+
+        <TextView
+                style="@style/RegistrationInputLabelStyle"
+                android:text="@string/registration_user_name_label"/>
+
+        <EditText
+                android:id="@+id/registerUserNameInput"
+                style="@style/RegistrationInputStyle"
+                android:inputType="text"
+                android:hint="@string/registration_user_name_hint">
+            <requestFocus/>
+        </EditText>
+
+        <TextView
+                style="@style/RegistrationInputLabelStyle"
+                android:text="@string/registration_password_label"/>
+
+        <EditText
+                android:id="@+id/registerNewPasswordInput"
+                style="@style/RegistrationInputStyle"
+                android:inputType="textPassword"
+                android:hint="@string/registration_new_password_hint"/>
+
+        <TextView
+                style="@style/RegistrationInputLabelStyle"
+                android:text="@string/registration_confirm_new_password_label"/>
+
+        <EditText
+                android:id="@+id/registerConfirmNewPasswordInput"
+                style="@style/RegistrationInputStyle"
+                android:inputType="textPassword"
+                android:hint="@string/registration_confirm_new_password_hint"/>
+
+        <CheckBox
+                android:id="@+id/registerActivityShowAdvancedFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:checked="false"
+                android:text="@string/registration_show_advanced_label"></CheckBox>
+
+        <LinearLayout
+                android:id="@+id/registerActivityAdvancedFieldsContainer"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+            <TextView
+                    android:id="@+id/serverUrlCaption"
+                    style="@style/RegistrationInputLabelStyle"
+                    android:text="@string/registration_server_url_label"/>
+
+            <EditText
+                    android:id="@+id/serverUrlInput"
+                    style="@style/RegistrationInputStyle"
+                    android:inputType="textUri"
+                    android:hint="@string/registration_server_url_hint"/>
+
+            <TextView
+                    android:id="@+id/studyIdCaption"
+                    style="@style/RegistrationInputLabelStyle"
+                    android:text="@string/registration_server_url_label"/>
+
+            <EditText
+                    android:id="@+id/studyIdInput"
+                    style="@style/RegistrationInputStyle"
+                    android:inputType="textUri"
+                    android:hint="@string/registration_server_url_hint">
+            </EditText>
+
+        </LinearLayout>
+
+        <Button
+                android:id="@+id/submitButton"
+                style="@style/RegistrationSubmitButton"
+                android:onClick="registerButtonPressed"
+                android:text="@string/registration_submit"/>
+
+        <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+    </LinearLayout>
+</ScrollView>

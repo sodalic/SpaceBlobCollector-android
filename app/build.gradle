@@ -21,6 +21,8 @@ android {
         versionCode 37       //TODO: update this Beiwe version code for new releases
         versionName '2.5.0'  //TODO: update this Beiwe version number for new releases
         setProperty("archivesBaseName", "Beiwe-$versionName")
+        buildConfigField("String", "DEFAULT_STUDY_ID", "\"" + keystoreProperties['defaultStudyId'] + "\"")
+        buildConfigField("String", "DEFAULT_SERVER_URL", "\"" + keystoreProperties['defaultServerUrl'] + "\"")
     }
     buildTypes {
         release {

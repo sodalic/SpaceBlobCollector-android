@@ -9,6 +9,14 @@ keyAlias=KEY_ALIAS
 storeFile=KEYSTORE_FILEPATH
 ```
 
+For the full client-side registration you should also configure
+
+```
+defaultServerUrl=URL_OF_THE_SERVER
+defaultStudyId=ID_OF_THE_STUDY_THAT_ALL_USERS_WILL_BE_ADDED_TO
+```
+
+
 You can also configure a Sentry DSN for each build type in this file.
 ```
 releaseDSN=https://publicKey:secretKey@host:port/1?options

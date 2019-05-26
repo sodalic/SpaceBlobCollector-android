@@ -79,6 +79,10 @@
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" />
         <activity
+            android:name="org.beiwe.app.ui.registration.RegisterFullActivity"
+            android:label="@string/title_activity_register"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="org.beiwe.app.ui.user.MainMenuActivity"
             android:label="@string/title_activity_main_menu" />
         <activity

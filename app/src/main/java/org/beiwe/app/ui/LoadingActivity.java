@@ -16,6 +16,7 @@ import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.EncryptionEngine;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.ui.registration.RegisterActivity;
+import org.beiwe.app.ui.registration.RegisterFullActivity;
 import org.beiwe.app.ui.user.MainMenuActivity;
 import org.beiwe.app.ui.utils.AlertsManager;
 
@@ -96,7 +97,8 @@ public class LoadingActivity extends RunningBackgroundServiceActivity {
 	/**CHecks whether device is registered, sends user to the correct screen. */
 	private void loadingSequence() {		
 		//if the device is not registered, push the user to the register activity
-		if ( !PersistentData.isRegistered() ){ startActivity(new Intent(this, RegisterActivity.class) ); }
+//		if ( !PersistentData.isRegistered() ){ startActivity(new Intent(this, RegisterActivity.class) ); }
+		if ( !PersistentData.isRegistered() ){ startActivity(new Intent(this, RegisterFullActivity.class) ); }
 		//if device is registered push user to the main menu.
 		else {
 			if (BuildConfig.APP_IS_BETA) {

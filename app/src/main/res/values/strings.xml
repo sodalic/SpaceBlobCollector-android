@@ -26,6 +26,7 @@
     <string name="reset_password_url">/set_password</string>
     <string name="graph_url">/graph</string>
     <string name="register_url">/register_user</string>
+    <string name="register_full_url">/register_user_full</string>
 
     <!-- Recording Options Strings -->
     <string name="title_activity_audio_recorder">Make a Voice Recording</string>
@@ -95,6 +96,10 @@
     <string name="registration_server_url_hint">For example, www.example.com</string>
     <string name="registration_user_id_label">User ID:</string>
     <string name="registration_user_id_hint">User ID</string>
+    <string name="registration_show_advanced_label">Show advanced fields</string>
+    <string name="registration_user_name_label">User Name</string>
+    <string name="registration_user_name_hint">How should we call you?</string>
+    <string name="registration_password_label">Password:</string>
     <string name="registration_temp_password_label">Temporary password:</string>
     <string name="registration_temp_password_hint">Temp password</string>
     <string name="registration_new_password_label">New password:</string>
@@ -106,6 +111,7 @@
     <string name="title_activity_loading">Loading Beiwe</string>
     <string name="empty_temp_password">Please enter the Temporary Password you were given at signup.</string>
     <string name="url_too_short">Please enter the URL for the study.</string>
+    <string name="invalid_study_id">Please enter a valid Study ID.</string>
     <string name="invalid_user_id">Please enter your User ID.</string>
     <string name="invalid_password">Invalid password.</string>
     <string name="couldnt_register">Can\'t register</string>

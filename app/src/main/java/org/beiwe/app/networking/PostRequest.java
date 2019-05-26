@@ -66,6 +66,20 @@ public class PostRequest {
 			return 502; }
 	}
 
+    public static int httpRegisterFull(String parameters, String url, String password) {
+        try {
+            return doRegisterRequestEx(parameters, new URL(url), password);
+        } catch (MalformedURLException e) {
+            Log.e("PostRequestFileUpload", "malformed URL");
+            e.printStackTrace();
+            return 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("PostRequest", "Network error: " + e.getMessage());
+            return 502;
+        }
+    }
+
 	/**For use with Async tasks.
 	 * This opens a connection with the server, sends the HTTP parameters, then receives a response code, and returns it.
 	 * This function exists to resend registration data if we are using non anonymized hashing
@@ -195,6 +209,10 @@ public class PostRequest {
 
 
 	private static int doRegisterRequest(String parameters, URL url) throws IOException {
+	    return doRegisterRequestEx(parameters,url,null);
+    }
+
+    private static int doRegisterRequestEx(String parameters, URL url, String password) throws IOException {
 		HttpURLConnection connection = setupHTTP(parameters, url, null);
 		int response = connection.getResponseCode();
 		if ( response == 200 ) {
@@ -205,7 +223,15 @@ public class PostRequest {
 				writeKey(key, response);
 				JSONObject deviceSettings = responseJSON.getJSONObject("device_settings");
 				SetDeviceSettings.writeDeviceSettings(deviceSettings);
-			} catch (JSONException e) { CrashHandler.writeCrashlog(e, appContext); }
+                Log.i("RegisterFull", "Response = '"+responseBody + "'");
+                if (password != null) {
+                    String patient_id = responseJSON.getString("patient_id");
+                    PersistentData.setLoginCredentials(patient_id, password);
+                    Log.i("RegisterFull", "patient_id = '"+patient_id + "'");
+                }
+            } catch (JSONException e) {
+                CrashHandler.writeCrashlog(e, appContext);
+            }
 		}
 		connection.disconnect();
 		return response;

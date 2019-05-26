@@ -4,13 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,7 +20,6 @@ import org.beiwe.app.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.networking.HTTPUIAsync;
 import org.beiwe.app.networking.PostRequest;
-import org.beiwe.app.storage.EncryptionEngine;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.TextFieldKeyboard;
 import org.beiwe.app.ui.utils.AlertsManager;
@@ -118,22 +115,17 @@ public class RegisterActivity extends RunningBackgroundServiceActivity {
 	 * @param url the URL for device registration*/
 	static private void tryToRegisterWithTheServer(final Activity currentActivity, final String url, final String newPassword) {
 		new HTTPUIAsync(url, currentActivity ) {
+			private String buildRegisterParams() {
+				// The logic of hashing various parameters is affected by PersistentData.getUseAnonymizedHashing()
+				return PostRequest.makeParameter("new_password", newPassword) +
+						RegisterFullActivity.buildDeviceInfoParams(currentActivity);
+			}
+
 			@Override
 			protected Void doInBackground(Void... arg0) {
 				DeviceInfo.initialize(currentActivity.getApplicationContext());
 				// Always use anonymized hashing when first registering the phone.
-				parameters= PostRequest.makeParameter("bluetooth_id", DeviceInfo.getBluetoothMAC() ) +
-							PostRequest.makeParameter("new_password", newPassword) +
-							PostRequest.makeParameter("phone_number", ((RegisterActivity) activity).getPhoneNumber() ) +
-							PostRequest.makeParameter("device_id", DeviceInfo.getAndroidID() ) +
-							PostRequest.makeParameter("device_os", "Android") +
-							PostRequest.makeParameter("os_version", DeviceInfo.getAndroidVersion() ) +
-							PostRequest.makeParameter("hardware_id", DeviceInfo.getHardwareId() ) +
-							PostRequest.makeParameter("brand", DeviceInfo.getBrand() ) +
-							PostRequest.makeParameter("manufacturer", DeviceInfo.getManufacturer() ) +
-							PostRequest.makeParameter("model", DeviceInfo.getModel() ) +
-							PostRequest.makeParameter("product", DeviceInfo.getProduct() ) +
-							PostRequest.makeParameter("beiwe_version", DeviceInfo.getBeiweVersion() );
+				parameters= buildRegisterParams();
 				responseCode = PostRequest.httpRegister(parameters, url);
 
 				// If we are not using anonymized hashing, resubmit the phone identifying information
@@ -144,18 +136,7 @@ public class RegisterActivity extends RunningBackgroundServiceActivity {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					parameters= PostRequest.makeParameter("bluetooth_id", DeviceInfo.getBluetoothMAC() ) +
-							PostRequest.makeParameter("new_password", newPassword) +
-							PostRequest.makeParameter("phone_number", ((RegisterActivity) activity).getPhoneNumber() ) +
-							PostRequest.makeParameter("device_id", DeviceInfo.getAndroidID() ) +
-							PostRequest.makeParameter("device_os", "Android") +
-							PostRequest.makeParameter("os_version", DeviceInfo.getAndroidVersion() ) +
-							PostRequest.makeParameter("hardware_id", DeviceInfo.getHardwareId() ) +
-							PostRequest.makeParameter("brand", DeviceInfo.getBrand() ) +
-							PostRequest.makeParameter("manufacturer", DeviceInfo.getManufacturer() ) +
-							PostRequest.makeParameter("model", DeviceInfo.getModel() ) +
-							PostRequest.makeParameter("product", DeviceInfo.getProduct() ) +
-							PostRequest.makeParameter("beiwe_version", DeviceInfo.getBeiweVersion() );
+					parameters = buildRegisterParams();
 					int resp = PostRequest.httpRegisterAgain(parameters, url);
 				}
 				return null;
@@ -179,22 +160,6 @@ public class RegisterActivity extends RunningBackgroundServiceActivity {
 				}
 			}
 		};
-	}
-	
-	/**This is the fuction that requires SMS permissions.  We need to supply a (unique) identifier for phone numbers to the registration arguments.
-	 * @return */
-	private String getPhoneNumber() {
-		TelephonyManager phoneManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-		String phoneNumber;
-		try {
-			// If READ_TEXT_AND_CALL_LOGS is true, we should not be able to get here without having
-			// asked for the SMS permission.  If it's false, we don't have permission to do this.
-			phoneNumber = phoneManager.getLine1Number();
-		} catch (SecurityException e) {
-			phoneNumber = "";
-		}
-		if (phoneNumber == null) { return EncryptionEngine.hashPhoneNumber(""); }
-		return EncryptionEngine.hashPhoneNumber(phoneNumber);
 	}
 	
 	
