@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.networking.HTTPUIAsync;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.EncryptionEngine;

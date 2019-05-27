@@ -13,10 +13,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.beiwe.app.BuildConfig;
+import io.sodalic.blob.ui.registration.RegisterFullActivity;
+import io.sodalic.blob.BuildConfig;
 import org.beiwe.app.DeviceInfo;
 import org.beiwe.app.PermissionHandler;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.networking.HTTPUIAsync;
 import org.beiwe.app.networking.PostRequest;

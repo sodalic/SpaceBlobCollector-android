@@ -3,10 +3,10 @@ package org.beiwe.app.networking;
 import android.content.Context;
 import android.util.Log;
 
-import org.beiwe.app.BuildConfig;
+import io.sodalic.blob.BuildConfig;
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.DeviceInfo;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.storage.SetDeviceSettings;
 import org.beiwe.app.storage.TextFileManager;

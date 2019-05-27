@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 
 //TODO: Low priority. Eli. Redoc.
 

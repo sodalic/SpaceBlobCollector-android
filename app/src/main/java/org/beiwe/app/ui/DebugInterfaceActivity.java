@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.beiwe.app.BackgroundService;
-import org.beiwe.app.BuildConfig;
+import io.sodalic.blob.BuildConfig;
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.PermissionHandler;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.Timer;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.networking.SurveyDownloader;

@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import io.sodalic.blob.R;
+
 import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.ui.user.AboutActivityLoggedOut;
@@ -237,10 +239,10 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 				}
 				// Log.d("sessionActivity", "shouldShowRequestPermissionRationale "+ permission +": " + shouldShowRequestPermissionRationale( permission ) );
 				if (shouldShowRequestPermissionRationale( permission ) ) {
-					if (!prePromptActive && !postPromptActive ) { showAlertThatForcesUserToGrantPermission(this, PermissionHandler.getBumpingPermissionMessage(permission),
+					if (!prePromptActive && !postPromptActive ) { showAlertThatForcesUserToGrantPermission(this, PermissionHandler.getBumpingPermissionMessage(this, permission),
 							PermissionHandler.permissionMap.get(permission) ); }
 				}
-				else if (!prePromptActive && !postPromptActive ) { showRegularPermissionAlert(this, PermissionHandler.getNormalPermissionMessage(permission),
+				else if (!prePromptActive && !postPromptActive ) { showRegularPermissionAlert(this, PermissionHandler.getNormalPermissionMessage(this,permission),
 						permission, PermissionHandler.permissionMap.get(permission)); }
 			}
 		}

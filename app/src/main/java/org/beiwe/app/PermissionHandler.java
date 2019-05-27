@@ -3,10 +3,14 @@ package org.beiwe.app;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
+import io.sodalic.blob.BuildConfig;
+
+import io.sodalic.blob.R;
 import org.beiwe.app.storage.PersistentData;
 
 import java.util.Collections;
@@ -15,7 +19,7 @@ import java.util.Map;
 
 public class PermissionHandler {
 	public static final int PERMISSION_GRANTED = PackageManager.PERMISSION_GRANTED;
-	public static int PERMISSION_DENIED = PackageManager.PERMISSION_DENIED;
+	public static final int PERMISSION_DENIED = PackageManager.PERMISSION_DENIED;
 	public static String POWER_EXCEPTION_PERMISSION = "POWER_EXCEPTION_PERMISSION";
 	
 	public static Map <String, Integer> permissionMap = new HashMap <String, Integer> ();	  
@@ -56,11 +60,22 @@ public class PermissionHandler {
 			permissionMessages.put( Manifest.permission.RECEIVE_SMS, "receive SMS messages.");
 			permissionMessages = Collections.unmodifiableMap(permissionMessages); }
 
-	public static String getNormalPermissionMessage(String permission) {
-		return String.format("For this study Beiwe needs permission to %s Please press allow on the following permissions request.", permissionMessages.get(permission) );
+
+	private static String getApplicationName(Context context) {
+		ApplicationInfo applicationInfo = context.getApplicationInfo();
+		int stringId = applicationInfo.labelRes;
+		return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
 	}
-	public static String getBumpingPermissionMessage(String permission) {
-		return String.format("To be fully enrolled in this study Beiwe needs permission to %s You appear to have denied or removed this permission. Beiwe will now bump you to its settings page so you can manually enable it.", permissionMessages.get(permission) );
+
+	public static String getNormalPermissionMessage(Context context, String permission) {
+		return String.format("For this study %1$s needs permission to %2$s Please press allow on the following permissions request.",
+				getApplicationName(context),
+				permissionMessages.get(permission) );
+	}
+	public static String getBumpingPermissionMessage(Context context, String permission) {
+		return String.format("To be fully enrolled in this study %1$s needs permission to %2$s You appear to have denied or removed this permission. %1$s will now bump you to its settings page so you can manually enable it.",
+				getApplicationName(context),
+				permissionMessages.get(permission) );
 	}
 	
 	/* The following are enabled by default.

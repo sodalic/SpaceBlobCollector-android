@@ -6,7 +6,7 @@ import android.util.Log;
 import org.beiwe.app.BackgroundService;
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.JSONUtils;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.SurveyScheduler;
 import org.beiwe.app.ui.utils.SurveyNotifications;

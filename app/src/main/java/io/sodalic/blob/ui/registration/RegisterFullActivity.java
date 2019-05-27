@@ -1,4 +1,4 @@
-package org.beiwe.app.ui.registration;
+package io.sodalic.blob.ui.registration;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -13,12 +13,17 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.*;
+
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
+
 import org.beiwe.app.*;
 import org.beiwe.app.networking.HTTPUIAsync;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.EncryptionEngine;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.TextFieldKeyboard;
+import org.beiwe.app.ui.registration.ConsentFormActivity;
 import org.beiwe.app.ui.utils.AlertsManager;
 
 import static org.beiwe.app.networking.PostRequest.addWebsitePrefix;
@@ -198,7 +203,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
     }
 
 
-    static String buildDeviceInfoParams(Activity activity) {
+    public static String buildDeviceInfoParams(Activity activity) {
         // The logic of hashing various parameters is affected by PersistentData.getUseAnonymizedHashing()
         return PostRequest.makeParameter("bluetooth_id", DeviceInfo.getBluetoothMAC()) +
                 PostRequest.makeParameter("phone_number", getPhoneNumber(activity)) +
@@ -210,7 +215,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
                 PostRequest.makeParameter("manufacturer", DeviceInfo.getManufacturer()) +
                 PostRequest.makeParameter("model", DeviceInfo.getModel()) +
                 PostRequest.makeParameter("product", DeviceInfo.getProduct()) +
-                PostRequest.makeParameter("app_version", DeviceInfo.getBeiweVersion());
+                PostRequest.makeParameter("app_version", DeviceInfo.getAppVersion());
     }
 
     /**

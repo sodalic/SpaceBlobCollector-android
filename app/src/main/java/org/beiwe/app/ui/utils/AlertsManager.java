@@ -5,7 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.networking.NetworkUtility;
 import org.beiwe.app.ui.registration.ForgotPasswordActivity;
 import org.beiwe.app.ui.registration.ResetPasswordActivity;

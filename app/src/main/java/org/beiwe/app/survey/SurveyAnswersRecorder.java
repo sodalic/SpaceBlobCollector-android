@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.storage.TextFileManager;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package org.beiwe.app.ui.user;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.TextFieldKeyboard;

@@ -1,7 +1,7 @@
 package org.beiwe.app.ui.user;
 
 import org.apache.http.util.EncodingUtils;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.session.SessionActivity;
 import org.beiwe.app.storage.PersistentData;

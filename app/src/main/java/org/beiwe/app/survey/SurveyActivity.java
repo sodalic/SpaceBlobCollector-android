@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.beiwe.app.JSONUtils;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.session.SessionActivity;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.storage.TextFileManager;

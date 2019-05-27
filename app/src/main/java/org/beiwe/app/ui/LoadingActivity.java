@@ -6,17 +6,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 import org.beiwe.app.BackgroundService;
 import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
-import org.beiwe.app.BuildConfig;
-import org.beiwe.app.R;
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.EncryptionEngine;
 import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.ui.registration.RegisterActivity;
-import org.beiwe.app.ui.registration.RegisterFullActivity;
+import io.sodalic.blob.ui.registration.RegisterFullActivity;
 import org.beiwe.app.ui.user.MainMenuActivity;
 import org.beiwe.app.ui.utils.AlertsManager;
 

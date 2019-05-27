@@ -4,9 +4,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
-import org.beiwe.app.BuildConfig;
+import io.sodalic.blob.BuildConfig;
 import org.beiwe.app.JSONUtils;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 

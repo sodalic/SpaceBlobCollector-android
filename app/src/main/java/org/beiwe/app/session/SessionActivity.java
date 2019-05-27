@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.beiwe.app.BackgroundService;
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.ui.registration.ResetPasswordActivity;

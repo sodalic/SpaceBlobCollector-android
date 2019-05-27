@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.session.ResetPassword;
 import org.beiwe.app.storage.PersistentData;

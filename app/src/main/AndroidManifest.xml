@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.beiwe.app">
-
+    package="io.sodalic.blob">
 
 
     <!-- GPS and network-location service -->
@@ -79,7 +78,7 @@
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" />
         <activity
-            android:name="org.beiwe.app.ui.registration.RegisterFullActivity"
+            android:name="io.sodalic.blob.ui.registration.RegisterFullActivity"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" />
         <activity
@@ -94,11 +93,11 @@
             android:label="@string/title_activity_reset_password" >
         </activity>
         <activity
-            android:name=".ui.user.AboutActivityLoggedOut"
+            android:name="org.beiwe.app.ui.user.AboutActivityLoggedOut"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
-            android:name=".ui.user.AboutActivityLoggedIn"
+            android:name="org.beiwe.app.ui.user.AboutActivityLoggedIn"
             android:label="@string/title_activity_about" >
         </activity>
         <activity
@@ -115,13 +114,13 @@
         <!-- SERVICE -->
 
         <service
-            android:name=".BackgroundService"
+            android:name="org.beiwe.app.BackgroundService"
             android:exported="false"
             android:label="BackgroundService-thing" />
 
         <!-- RECEIVERS -->
 
-        <receiver android:name=".listeners.BootListener" >
+        <receiver android:name="org.beiwe.app.listeners.BootListener" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
@@ -131,7 +130,7 @@
 
             </intent-filter>
         </receiver>
-        <receiver android:name=".listeners.SmsReceivedLogger" >
+        <receiver android:name="org.beiwe.app.listeners.SmsReceivedLogger" >
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -142,10 +141,10 @@
             </intent-filter>
         </receiver>
         
-        <receiver android:name=".listeners.BluetoothListener" >
+        <receiver android:name="org.beiwe.app.listeners.BluetoothListener" >
         </receiver>
         
-        <receiver android:name=".listeners.PowerStateListener" >
+        <receiver android:name="org.beiwe.app.listeners.PowerStateListener" >
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />

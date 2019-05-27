@@ -15,12 +15,12 @@ android {
     }
     compileSdkVersion 26
     defaultConfig {
-        applicationId "org.beiwe.app"
+        applicationId "io.sodalic.blob"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 37       //TODO: update this Beiwe version code for new releases
-        versionName '2.5.0'  //TODO: update this Beiwe version number for new releases
-        setProperty("archivesBaseName", "Beiwe-$versionName")
+        versionCode 37       //TODO: update this version code for new releases
+        versionName "0.0.1"  //TODO: update this version number for new releases
+        setProperty("archivesBaseName", "SpaceBlob-$versionName")
         buildConfigField("String", "DEFAULT_STUDY_ID", "\"" + keystoreProperties['defaultStudyId'] + "\"")
         buildConfigField("String", "DEFAULT_SERVER_URL", "\"" + keystoreProperties['defaultServerUrl'] + "\"")
     }
@@ -42,12 +42,12 @@ android {
             buildConfigField("boolean", "APP_IS_BETA", "true")
             buildConfigField("boolean", "APP_IS_DEV", "false")
             buildConfigField("String", "SENTRY_DSN", "\"" + keystoreProperties['betaDSN'] + "\"")
-            buildConfigField("boolean", "ALLOW_INSECURE_CONNECTION", "false")
+            buildConfigField("boolean", "ALLOW_INSECURE_CONNECTION", "true")
         }
         development {
-            versionNameSuffix("-development")
+            versionNameSuffix("-dev")
             signingConfig signingConfigs.config
-            manifestPlaceholders = [appNameSuffix: "-development"]
+            manifestPlaceholders = [appNameSuffix: "-dev"]
             buildConfigField("boolean", "APP_IS_BETA", "true")
             buildConfigField("boolean", "APP_IS_DEV", "true")
             buildConfigField("String", "SENTRY_DSN", "\"" + keystoreProperties['developmentDSN'] + "\"")
@@ -59,23 +59,25 @@ android {
     productFlavors {
         googlePlayStore {
             dimension "customizableServerUrl"
-            manifestPlaceholders = [appName: "Beiwe2"]
+            manifestPlaceholders = [appName: "SpaceBlob"]
             buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", 'true')
             buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'false')
         }
-        onnelaLabServer {
-            dimension "customizableServerUrl"
-            manifestPlaceholders = [appName: "Beiwe"]
-            buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", "false")
-            buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'true')
-        }
+// TODO SG: remove altogether        
+//        onnelaLabServer {
+//            dimension "customizableServerUrl"
+//            manifestPlaceholders = [appName: "Beiwe"]
+//            buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", "false")
+//            buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'true')
+//        }
     }
     useLibrary "org.apache.http.legacy"
-    sourceSets {
-        onnelaLabServer {
-            manifest.srcFile 'src/onnelaLabServer/AndroidManifest.xml'
-        }
-    }
+// TODO SG: remove altogether        
+//    sourceSets {
+//        onnelaLabServer {
+//            manifest.srcFile 'src/onnelaLabServer/AndroidManifest.xml'
+//        }
+//    }
 }
 // Don't include the default "debug" build variant as an option
 android.variantFilter { variant ->

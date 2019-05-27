@@ -22,7 +22,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 
 import java.util.Arrays;
 

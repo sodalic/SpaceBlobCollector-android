@@ -4,11 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import io.sodalic.blob.BuildConfig;
+
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.ui.DebugInterfaceActivity;
-import org.beiwe.app.ui.LoadingActivity;
-import org.beiwe.app.ui.user.MainMenuActivity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -65,7 +64,7 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler{
 		}
 		catch(Exception e1) {
 			String exceptionInfo =  System.currentTimeMillis() + "\n"
-									+ "BeiweVersion:" + DeviceInfo.getBeiweVersion()
+									+ "Version:" + DeviceInfo.getAppVersion()
 									+ ", AndroidVersion:" + DeviceInfo.getAndroidVersion()
 									+ ", Product:" + DeviceInfo.getProduct()
 									+ ", Brand:" + DeviceInfo.getBrand()

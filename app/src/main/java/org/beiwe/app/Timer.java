@@ -2,6 +2,8 @@ package org.beiwe.app;
 
 import java.util.Calendar;
 
+import io.sodalic.blob.R;
+
 import org.beiwe.app.storage.PersistentData;
 
 

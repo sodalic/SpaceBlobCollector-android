@@ -3,6 +3,9 @@ package org.beiwe.app;
 import java.util.Calendar;
 import java.util.List;
 
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
+
 import org.beiwe.app.listeners.AccelerometerListener;
 import org.beiwe.app.listeners.BluetoothListener;
 import org.beiwe.app.listeners.CallLogger;

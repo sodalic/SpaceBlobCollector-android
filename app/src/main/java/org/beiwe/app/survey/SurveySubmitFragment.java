@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 
 import java.util.ArrayList;
 

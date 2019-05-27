@@ -1,6 +1,6 @@
 package org.beiwe.app.ui.utils;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.storage.TextFileManager;
 import org.beiwe.app.survey.AudioRecorderActivity;

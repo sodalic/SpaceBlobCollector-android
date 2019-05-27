@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
 
+import io.sodalic.blob.BuildConfig;
+
 import org.beiwe.app.storage.EncryptionEngine;
 
 /**This is a class that NEEDS to be instantiated in the background service. In order to get the Android ID, the class needs
@@ -101,7 +103,7 @@ public class DeviceInfo {
 		}
 	}
 	
-	public static String getBeiweVersion() {
+	public static String getAppVersion() {
 		try {
 			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(),0);
 			return String.valueOf(info.versionCode) + "-" + BuildConfig.BUILD_TYPE;

@@ -2,7 +2,7 @@ package org.beiwe.app.survey;
 
 import java.io.IOException;
 
-import org.beiwe.app.R;
+import io.sodalic.blob.R;
 import org.beiwe.app.session.SessionActivity;
 import org.beiwe.app.storage.AudioFileManager;
 import org.beiwe.app.storage.PersistentData;
