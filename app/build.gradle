@@ -27,7 +27,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles fileTree('proguard_rules').include("*.pro").asList().toArray()
             signingConfig signingConfigs.config
             manifestPlaceholders = [appNameSuffix: ""]
             buildConfigField("boolean", "APP_IS_BETA", "false")
@@ -63,7 +64,7 @@ android {
             buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", 'true')
             buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'false')
         }
-// TODO SG: remove altogether        
+// TODO SG: remove altogether
 //        onnelaLabServer {
 //            dimension "customizableServerUrl"
 //            manifestPlaceholders = [appName: "Beiwe"]
@@ -72,7 +73,7 @@ android {
 //        }
     }
     useLibrary "org.apache.http.legacy"
-// TODO SG: remove altogether        
+// TODO SG: remove altogether
 //    sourceSets {
 //        onnelaLabServer {
 //            manifest.srcFile 'src/onnelaLabServer/AndroidManifest.xml'
@@ -97,4 +98,7 @@ dependencies {
     implementation 'com.commonsware.cwac:anddown:0.3.0'
     implementation 'io.sentry:sentry-android:1.7.3'
     implementation 'com.madgag.spongycastle:core:1.54.0.0'
+
+    // use 3.12.3 as 3.14 requires android 24 because of static methods in interface 
+    implementation("com.squareup.okhttp3:okhttp:3.12.3")
 }

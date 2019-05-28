@@ -21,6 +21,9 @@ import android.view.View;
 
 import io.sodalic.blob.R;
 
+import io.sodalic.blob.context.BlobContext;
+import io.sodalic.blob.context.BlobContextProxy;
+import io.sodalic.blob.utils.Utils;
 import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.ui.user.AboutActivityLoggedOut;
@@ -28,26 +31,37 @@ import org.beiwe.app.ui.user.AboutActivityLoggedOut;
 /**All Activities in the app extend this Activity.  It ensures that the app's key services (i.e.
  * BackgroundService, LoginManager, PostRequest, DeviceInfo, and WifiListener) are running before
  * the interface tries to interact with any of those.
- * 
- * Activities that require the user to be logged in (SurveyActivity, GraphActivity, 
+ *
+ * Activities that require the user to be logged in (SurveyActivity, GraphActivity,
  * AudioRecorderActivity, etc.) extend SessionActivity, which extends this.
  * Activities that do not require the user to be logged in (the login, registration, and password-
  * reset Activities) extend this activity directly.
  * Therefore all Activities have this Activity's functionality (binding the BackgroundService), but
- * the login-protected Activities have additional functionality that forces the user to log in. 
- * 
+ * the login-protected Activities have additional functionality that forces the user to log in.
+ *
  * @author Eli Jones, Josh Zagorsky
  */
-public class RunningBackgroundServiceActivity extends AppCompatActivity {
+public abstract class RunningBackgroundServiceActivity extends AppCompatActivity {
+	private final String logTag = Utils.getLogTag(this.getClass());
+
+
 	/** The backgroundService variable is an Activity's connection to the ... BackgroundService.
 	 * We ensure the BackgroundService is running in the onResume call, and functionality that
 	 * relies on the BackgroundService is always tied to UI elements, reducing the chance of
 	 * a null backgroundService variable to essentially zero. */
 	protected BackgroundService backgroundService;
 
+	private  BlobContext blobContext;
+//	private final BlobContext blobContext = new BlobContextProxy(this);
+
 	//an unused variable for tracking whether the background Service is connected, uncomment if we ever need that.
 //	protected boolean isBound = false;
-	
+
+
+	public final BlobContext getBlobContext() {
+		return blobContext;
+	}
+
 	/**The ServiceConnection Class is our trigger for events that rely on the BackgroundService */
 	protected ServiceConnection backgroundServiceConnection = new ServiceConnection() {
 	    @Override
@@ -58,7 +72,7 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 	        doBackgroundDependentTasks();
 //	        isBound = true;
 	    }
-	    
+
 	    @Override
 	    public void onServiceDisconnected(ComponentName name) {
 	        Log.w("ServiceConnection", "Background Service Disconnected");
@@ -66,23 +80,27 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 //	        isBound = false;
 	    }
 	};
-	
+
 	@Override
-	protected void onCreate(Bundle bundle){ 
+	protected void onCreate(Bundle bundle){
 		super.onCreate(bundle);
+        Log.i(logTag, "onCreate");
+		blobContext = new BlobContextProxy(this);
+
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(getApplicationContext()));
 		PersistentData.initialize(getApplicationContext());
 	}
-	
+
 	/** Override this function to do tasks on creation, but only after the background Service has been initialized. */
 	protected void doBackgroundDependentTasks() { /*Log.d("RunningBackgroundServiceActivity", "doBackgroundDependentTasks ran as default (do nothing)");*/ }
-	
+
 	@Override
 	/**On creation of RunningBackgroundServiceActivity we guarantee that the BackgroundService is
 	 * actually running, we then bind to it so we can access program resources. */
 	protected void onResume() {
 		super.onResume();
-		
+        Log.i(logTag, "onResume");
+
 		Intent startingIntent = new Intent(this.getApplicationContext(), BackgroundService.class);
 		startingIntent.addFlags(Intent.FLAG_FROM_BACKGROUND);
 		startService(startingIntent);
@@ -95,6 +113,7 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 	 * memory leak warning (and probably an actual memory leak, too). */
 	protected void onPause() {
 		super.onPause();
+        Log.i(logTag, "onPause");
 		activityNotVisible = true;
 		unbindService(backgroundServiceConnection);
 	}
@@ -103,7 +122,7 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 	/*####################################################################
 	########################## Common UI #################################
 	####################################################################*/
-	
+
 	@Override
 	/** Common UI element, the menu button.*/
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,7 +143,7 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 		return true;
 	}
 
-	
+
 	@Override
 	/** Common UI element, items in menu.*/
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -145,14 +164,14 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-	
+
+
 	/** sends user to phone, calls the user's clinician. */
 	@SuppressWarnings("MissingPermission")
 	public void callClinician(View v) {
 		startPhoneCall(PersistentData.getPrimaryCareNumber());
 	}
-	
+
 	/** sends user to phone, calls the study's research assistant. */
 	@SuppressWarnings("MissingPermission")
 	public void callResearchAssistant(View v) {
@@ -203,7 +222,7 @@ public class RunningBackgroundServiceActivity extends AppCompatActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Log.i("sessionActivity", "onActivityResult. requestCode: " + requestCode + ", resultCode: " + resultCode );
+        Log.i(logTag, String.format("onActivityResult req = %d, res = %d", requestCode, resultCode));
 		aboutToResetFalseActivityReturn = true;
 	}
 

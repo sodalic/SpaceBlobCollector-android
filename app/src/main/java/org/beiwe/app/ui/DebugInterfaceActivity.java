@@ -4,6 +4,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.List;
 
+import io.sodalic.blob.utils.Utils;
 import org.beiwe.app.BackgroundService;
 import io.sodalic.blob.BuildConfig;
 import org.beiwe.app.CrashHandler;
@@ -153,7 +154,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 	
 	//network operations
 	public void uploadDataFiles(View view) { PostRequest.uploadAllFiles(); }
-	public void runSurveyDownload(View view) { SurveyDownloader.downloadSurveys(getApplicationContext()); }
+	public void runSurveyDownload(View view) { SurveyDownloader.downloadSurveys(getBlobContext()); }
 	public void buttonTimer(View view) { backgroundService.startTimers(); }	
 	
 	
@@ -188,7 +189,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 	public void crashUi(View view) { throw new NullPointerException("oops, you bwoke it."); }
 	public void crashBackground(View view) { BackgroundService.timer.setupExactSingleAlarm((long) 0, new Intent("crashBeiwe")); }
 	public void crashBackgroundInFive(View view) { BackgroundService.timer.setupExactSingleAlarm((long) 5000, new Intent("crashBeiwe")); }
-	public void enterANRUI(View view) { try { Thread.sleep(100000); } catch(InterruptedException ie) {	ie.printStackTrace(); } }
+	public void enterANRUI(View view) {	Utils.sleep(100_000); }
 	public void enterANRBackground(View view) { BackgroundService.timer.setupExactSingleAlarm((long) 0, new Intent("enterANR")); }
 	public void stopBackgroundService(View view) { backgroundService.stop(); }
 	public void testManualErrorReport(View view) {

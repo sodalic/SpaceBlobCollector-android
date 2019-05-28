@@ -247,7 +247,7 @@ public class PostRequest {
 		return response;
 	}
 	
-	private static int writeKey(String key, int httpResponse) {
+	public static int writeKey(String key, int httpResponse) {
 		if ( !key.startsWith("MIIBI") ) {
 			Log.e("PostRequest - register", " Received an invalid encryption key from server: " + key );
 			return 2; }

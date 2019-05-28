@@ -13,20 +13,21 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.*;
-
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.R;
-
-import org.beiwe.app.*;
-import org.beiwe.app.networking.HTTPUIAsync;
+import io.sodalic.blob.context.BlobContext;
+import io.sodalic.blob.net.ServerApi;
+import io.sodalic.blob.sharedui.BlobActivity;
+import io.sodalic.blob.sharedui.HttpUIAsync;
+import io.sodalic.blob.utils.Utils;
+import org.beiwe.app.DeviceInfo;
+import org.beiwe.app.PermissionHandler;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.EncryptionEngine;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.TextFieldKeyboard;
 import org.beiwe.app.ui.registration.ConsentFormActivity;
 import org.beiwe.app.ui.utils.AlertsManager;
-
-import static org.beiwe.app.networking.PostRequest.addWebsitePrefix;
 
 
 /**
@@ -36,7 +37,8 @@ import static org.beiwe.app.networking.PostRequest.addWebsitePrefix;
  */
 
 @SuppressLint("ShowToast")
-public class RegisterFullActivity extends RunningBackgroundServiceActivity {
+public class RegisterFullActivity extends BlobActivity {
+
     private EditText userNameInput;
     private EditText passwordInput;
     private EditText confirmPasswordInput;
@@ -55,7 +57,6 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_full);
-
 
         userNameInput = findViewById(R.id.registerUserNameInput);
         passwordInput = findViewById(R.id.registerNewPasswordInput);
@@ -81,7 +82,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
         } else {
             serverUrlInput.setText(BuildConfig.DEFAULT_SERVER_URL);
         }
-        // TODO: get rid altogether?
+        // TODO SG: get rid altogether?
         // For now this is the default study on the dev server
         studyIdUrlInput.setText(BuildConfig.DEFAULT_STUDY_ID);
 
@@ -104,10 +105,8 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
 
     /**
      * Registration sequence begins here, called when the submit button is pressed.
-     *
-     * @param view
      */
-    public synchronized void registerButtonPressed(View view) {
+    public void registerButtonPressed(View view) {
         String serverUrl = serverUrlInput.getText().toString();
         String userName = userNameInput.getText().toString();
         String password = passwordInput.getText().toString();
@@ -138,68 +137,44 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
             if (BuildConfig.CUSTOMIZABLE_SERVER_URL) {
                 PersistentData.setServerUrl(serverUrl);
             }
-            tryToRegisterWithTheServer(this,
-                    addWebsitePrefix(getApplicationContext().getString(R.string.register_full_url)),
-                    addWebsitePrefix(getApplicationContext().getString(R.string.register_url)),
-                    userName,
-                    password,
-                    studyId);
+            tryToRegisterWithTheServer(this, serverUrl,
+                    userName, password, studyId);
         }
     }
 
 
     /**
      * Implements the server request logic for user, device registration.
-     *
-     * @param registerFullUrl the URL for device registration
      */
-    static private void tryToRegisterWithTheServer(final Activity currentActivity, final String registerFullUrl, final String reRegisterUrl,
+    private static void tryToRegisterWithTheServer(RegisterFullActivity currentActivity, final String serverUrl,
                                                    final String userName, final String password, final String studyId) {
-        new HTTPUIAsync(registerFullUrl, currentActivity) {
-
+        new HttpUIAsync<Void>(currentActivity, currentActivity.getString(R.string.couldnt_register)) {
             @Override
-            protected Void doInBackground(Void... arg0) {
-                DeviceInfo.initialize(currentActivity.getApplicationContext());
-                // Always use anonymized hashing when first registering the phone.
-                parameters = PostRequest.makeParameter("userName", userName) + PostRequest.makeParameter("password", password) + PostRequest.makeParameter("studyId", studyId)
-                        + buildDeviceInfoParams(currentActivity);
-                responseCode = PostRequest.httpRegisterFull(parameters, url, password);
+            protected Void doTask(BlobContext blobContext) throws Exception {
+                DeviceInfo.initialize(activity.getApplicationContext());
 
+                blobContext.initServerApi(serverUrl);
+                ServerApi serverApi = blobContext.getServerApi();
+                serverApi.sendRegisterFull(userName, password, studyId);
+
+                // Getting here means sendRegisterFull was successful
                 // If we are not using anonymized hashing, resubmit the phone identifying information
-                if (responseCode == 200 && !PersistentData.getUseAnonymizedHashing()) { // This short circuits so if the initial register fails, it won't try here
-                    try {
-                        //Sleep for one second so the backend does not receive information with overlapping timestamps
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    // this is a re-regestering call with a different signature so "new_password"
-                    parameters = PostRequest.makeParameter("new_password", password) + buildDeviceInfoParams(currentActivity);
-                    int resp = PostRequest.httpRegisterAgain(parameters, reRegisterUrl);
+                if (!PersistentData.getUseAnonymizedHashing()) { // This short circuits so if the initial register fails, it won't try here
+                    Utils.sleep(1000);
+                    serverApi.sendRegisterAgain(password);
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void arg) {
-                super.onPostExecute(arg);
-                if (responseCode == 200) {
-                    PersistentData.setUserName(userName);
-                    PersistentData.setPassword(password); //TODO: now it is a partial duplicate of the PostRequest.doRegisterRequestEx logic
-
-                    //TODO: does PhoneNumberEntryActivity still make sense in our app?
-//                    if (PersistentData.getCallClinicianButtonEnabled() || PersistentData.getCallResearchAssistantButtonEnabled()) {
-//                        activity.startActivity(new Intent(activity.getApplicationContext(), PhoneNumberEntryActivity.class));
-//                    } else {
-//                        activity.startActivity(new Intent(activity.getApplicationContext(), ConsentFormActivity.class));
-//                    }
-                    activity.startActivity(new Intent(activity.getApplicationContext(), ConsentFormActivity.class));
-                    activity.finish();
-                } else {
-                    AlertsManager.showAlert(responseCode, currentActivity.getString(R.string.couldnt_register), currentActivity);
-                }
+            protected void handleSuccess(Void result) {
+                PersistentData.setUserName(userName);
+                //TODO SG: now it is a partial duplicate of the PostRequest.doRegisterRequestEx/ServerApi.sendRegisterFull logic
+                PersistentData.setPassword(password);
+                activity.startActivity(new Intent(activity, ConsentFormActivity.class));
+                activity.finish();
             }
-        };
+        }.execute();
     }
 
 
@@ -251,7 +226,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
     private static Boolean activityNotVisible = false;
 
     private void goToSettings() {
-        // Log.i("reg", "goToSettings");
+        // Log.i(TAG, "goToSettings");
         Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
         myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
         myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -261,7 +236,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
 
     @Override
     protected void onResume() {
-        // Log.i("reg", "onResume");
+        // Log.i(TAG, "onResume");
         super.onResume();
         activityNotVisible = false;
 
@@ -296,13 +271,13 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Log.i("reg", "onActivityResult. requestCode: " + requestCode + ", resultCode: " + resultCode );
+        // Log.i(TAG, "onActivityResult. requestCode: " + requestCode + ", resultCode: " + resultCode );
         aboutToResetFalseActivityReturn = true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // Log.i("reg", "onRequestPermissionResult");
+        // Log.i(TAG, "onRequestPermissionResult");
         if (activityNotVisible) return; //this is identical logical progression to the way it works in SessionActivity.
         for (int i = 0; i < grantResults.length; i++) {
             if (permissions[i].equals(Manifest.permission.READ_SMS)) {
@@ -321,7 +296,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
     /* Message Popping */
 
     public static void showPrePermissionAlert(final Activity activity) {
-        // Log.i("reg", "showPreAlert");
+        // Log.i(TAG, "showPreAlert");
         if (prePromptActive) {
             return;
         }
@@ -345,7 +320,7 @@ public class RegisterFullActivity extends RunningBackgroundServiceActivity {
     }
 
     public static void showPostPermissionAlert(final RegisterFullActivity activity) {
-        // Log.i("reg", "showPostAlert");
+        // Log.i(TAG, "showPostAlert");
         if (postPromptActive) {
             return;
         }

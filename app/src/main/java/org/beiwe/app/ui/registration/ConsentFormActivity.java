@@ -48,7 +48,7 @@ public class ConsentFormActivity extends RunningBackgroundServiceActivity {
 		PersistentData.loginOrRefreshLogin();
 
 		// Download the survey questions and schedule the surveys
-		SurveyDownloader.downloadSurveys(getApplicationContext());
+		SurveyDownloader.downloadSurveys(getBlobContext());
 
 		
 		// Create new data files, these will now have a patientID prepended to those files
