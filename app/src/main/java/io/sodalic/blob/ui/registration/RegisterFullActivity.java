@@ -122,7 +122,7 @@ public class RegisterFullActivity extends BlobActivity {
             return;
         } else if (userName.length() == 0) {
             // If the user id length is too short, alert the user
-            AlertsManager.showAlert(getString(R.string.invalid_user_id), getString(R.string.couldnt_register), this);
+            AlertsManager.showAlert(getString(R.string.invalid_user_name), getString(R.string.couldnt_register), this);
             return;
         } else if (!PersistentData.passwordMeetsRequirements(password)) {
             // If the new password has too few characters
@@ -178,42 +178,7 @@ public class RegisterFullActivity extends BlobActivity {
     }
 
 
-    public static String buildDeviceInfoParams(Activity activity) {
-        // The logic of hashing various parameters is affected by PersistentData.getUseAnonymizedHashing()
-        return PostRequest.makeParameter("bluetooth_id", DeviceInfo.getBluetoothMAC()) +
-                PostRequest.makeParameter("phone_number", getPhoneNumber(activity)) +
-                PostRequest.makeParameter("device_id", DeviceInfo.getAndroidID()) +
-                PostRequest.makeParameter("device_os", "Android") +
-                PostRequest.makeParameter("os_version", DeviceInfo.getAndroidVersion()) +
-                PostRequest.makeParameter("hardware_id", DeviceInfo.getHardwareId()) +
-                PostRequest.makeParameter("brand", DeviceInfo.getBrand()) +
-                PostRequest.makeParameter("manufacturer", DeviceInfo.getManufacturer()) +
-                PostRequest.makeParameter("model", DeviceInfo.getModel()) +
-                PostRequest.makeParameter("product", DeviceInfo.getProduct()) +
-                PostRequest.makeParameter("app_version", DeviceInfo.getAppVersion());
-    }
 
-    /**
-     * This is the function that requires SMS permissions.  We need to supply a (unique) identifier for phone numbers to the registration arguments.
-     *
-     * @return
-     */
-    private static String getPhoneNumber(Activity activity) {
-        TelephonyManager phoneManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        String phoneNumber;
-        try {
-            // If READ_TEXT_AND_CALL_LOGS is true, we should not be able to get here without having
-            // asked for the SMS permission.  If it's false, we don't have permission to do this.
-            phoneNumber = phoneManager.getLine1Number();
-        } catch (SecurityException e) {
-            phoneNumber = "";
-        }
-        if (phoneNumber == null) {
-            return EncryptionEngine.hashPhoneNumber("");
-        }
-        return EncryptionEngine.hashPhoneNumber(phoneNumber);
-    }
-	
 	
 	/*####################################################################
 	###################### Permission Prompting ##########################

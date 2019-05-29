@@ -75,10 +75,6 @@
             android:name="org.beiwe.app.ui.registration.ForgotPasswordActivity"
             android:label="@string/title_activity_forgot_password" />
         <activity
-            android:name="org.beiwe.app.ui.registration.RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="io.sodalic.blob.ui.registration.RegisterFullActivity"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" />
