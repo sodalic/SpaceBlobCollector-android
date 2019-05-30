@@ -1,22 +1,26 @@
 package io.sodalic.blob.net;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import android.content.Context;
 import android.util.Log;
-import io.sodalic.blob.utils.StringUtils;
+
 import okhttp3.*;
-import io.sodalic.blob.BuildConfig;
-import io.sodalic.blob.utils.Utils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.DeviceInfo;
 import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.storage.SetDeviceSettings;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.Objects;
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.utils.StringUtils;
+import io.sodalic.blob.utils.Utils;
 
 
 /**
@@ -26,6 +30,10 @@ public class ServerApi {
     private static final String TAG = Utils.getLogTag(ServerApi.class);
 
     private static final int MAX_LOG_BODY_LEN = 1000;
+
+    // This is the media type used to describe our uploaded files
+    // Let's use some fair description
+    private static final MediaType MEDIA_TYPE_FILE_UPLOAD = MediaType.get("text/x.csv-encrypted");
 
     private final OkHttpClient client = new OkHttpClient();
     private final Context androidContext;
@@ -39,7 +47,7 @@ public class ServerApi {
         Log.i(TAG, String.format("Init ServerApi for '%s' => '%s'", baseServerUrl, this.baseServerUrl));
     }
 
-    static String fixUrl(String serverUrl) {
+    private static String fixUrl(String serverUrl) {
         if (serverUrl.startsWith("https://")) {
             return serverUrl;
         } else if (serverUrl.startsWith("http://")) {
@@ -50,9 +58,11 @@ public class ServerApi {
         } else {
             return "https://" + serverUrl;
         }
-
     }
 
+    /**
+     * This the main method that actually does the job of sending requests
+     */
     private String sendSimplePost(String methodUrl, RequestBody requestBody) throws ServerException {
         final String fullUrl = baseServerUrl + methodUrl;
         Log.i(TAG, String.format("Sending request to '%s'", fullUrl));
@@ -62,41 +72,61 @@ public class ServerApi {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
+            final ResponseBody responseBody = response.body();
             if (!response.isSuccessful()) {
                 int code = response.code();
                 Log.w(TAG, String.format("Bad response code = %d", code));
-                Log.w(TAG, String.format("Bad response body = '%s'", response.body()));
+                Log.w(TAG, String.format("Bad response body = '%s'", responseBody));
+                if (responseBody != null)
+                    Log.w(TAG, String.format("Bad response body = '%s'", responseBody.string()));
                 throw new ServerException(code);
             }
-
-//            Headers responseHeaders = response.headers();
-//            for (int i = 0; i < responseHeaders.size(); i++) {
-//                System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-//            }
-
-            String responseBody = response.body().string();
-            String bodyForLog = StringUtils.truncate(responseBody, MAX_LOG_BODY_LEN);
-            Log.i(TAG, "Response = '" + bodyForLog + "'");
-            return responseBody;
+            if (responseBody == null) {
+                // not an expected case
+                Log.w(TAG, String.format("Response code = %d, body is empty", response.code()));
+                return null;
+            } else {
+                String responseBodyText = responseBody.string();
+                String bodyForLog = StringUtils.truncate(responseBodyText, MAX_LOG_BODY_LEN);
+                Log.i(TAG, "Response = '" + bodyForLog + "'");
+                return responseBodyText;
+            }
         } catch (IOException e) {
             throw new ServerException(e);
         }
     }
 
-
-    private static void addSecurityParameters(FormBody.Builder formBodyBuilder, String newPassword) {
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //// legacy authentication
+    private static Map<String, String> buildSecurityParameters(String newPassword) {
         String patientId = PersistentData.getPatientID();
         String deviceId = DeviceInfo.getAndroidID();
         String password = PersistentData.getPassword();
         if (newPassword != null) password = newPassword;
 
-        formBodyBuilder.add("patient_id", patientId);
-        formBodyBuilder.add("password", password);
-        formBodyBuilder.add("device_id", deviceId);
+        HashMap<String, String> params = new HashMap<>();
+        params.put("patient_id", patientId);
+        params.put("password", password);
+        params.put("device_id", deviceId);
+        return params;
+    }
+
+    private static void addSecurityParameters(FormBody.Builder formBodyBuilder, String newPassword) {
+        Map<String, String> params = buildSecurityParameters(newPassword);
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            formBodyBuilder.add(e.getKey(), e.getValue());
+        }
     }
 
     private static void addSecurityParameters(FormBody.Builder formBodyBuilder) {
         addSecurityParameters(formBodyBuilder, null);
+    }
+
+    private static void addSecurityParameters(MultipartBody.Builder multipartBodyBuilder) {
+        Map<String, String> params = buildSecurityParameters(null);
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            multipartBodyBuilder.addFormDataPart(e.getKey(), e.getValue());
+        }
     }
 
     //////////////////////////////////////////////////
@@ -165,13 +195,35 @@ public class ServerApi {
         String responseBody = sendSimplePost("/register_user", formBodyBuilder.build());
     }
 
+    /**
+     * This request is used to download JSON with information about relevant surveys
+     */
     public String downloadSurveys() throws ServerException {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
         addSecurityParameters(formBodyBuilder);
 
         String responseBody = sendSimplePost("/download_surveys", formBodyBuilder.build());
-
         return responseBody;
+    }
+
+    /**
+     * This is the method that uploads {@code file} to the server for further processing.
+     * The {@code file} is expected to be one of the known files provided by {@link org.beiwe.app.storage.TextFileManager}
+     *
+     * @param file file to upload onto the server
+     */
+    public void uploadFile(File file) throws ServerException {
+        Log.i(TAG, String.format("Uploading file '%s'", file.getName()));
+
+        MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+
+        addSecurityParameters(multipartBuilder);
+        multipartBuilder
+                .addFormDataPart("file_name", file.getName())
+                .addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_FILE_UPLOAD, file));
+        sendSimplePost("/upload", multipartBuilder.build());
+        //TODO SG: remove file after successful upload
     }
 
 }
