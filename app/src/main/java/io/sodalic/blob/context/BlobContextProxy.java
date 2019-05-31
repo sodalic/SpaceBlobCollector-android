@@ -6,7 +6,7 @@ import io.sodalic.blob.net.ServerApi;
 
 import java.util.Objects;
 
-import tracking.UploadHelper;
+import io.sodalic.blob.tracking.UploadManager;
 
 /**
  * Proxy to the {@link BlobContext} that is expected to be used in most of the cases.
@@ -65,7 +65,7 @@ public final class BlobContextProxy implements BlobContext {
     }
 
     @Override
-    public UploadHelper getUploadHelper() {
-        return blobContext.getUploadHelper();
+    public UploadManager getUploadManager() {
+        return blobContext.getUploadManager();
     }
 }

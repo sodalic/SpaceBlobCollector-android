@@ -2,7 +2,7 @@ package io.sodalic.blob.context;
 
 import android.content.Context;
 
-import tracking.UploadHelper;
+import io.sodalic.blob.tracking.UploadManager;
 
 import io.sodalic.blob.net.ServerApi;
 
@@ -27,7 +27,7 @@ public interface BlobContext {
     /**
      * @return Whether the context is already fully initialized and you can do whatever you want. If it is not
      * fully initialized yet, you should be careful as some services such as {@link #getServerApi()} might be
-     * not available (i.e. {@code null}) and other like {@link #getUploadHelper()} might not work properly.
+     * not available (i.e. {@code null}) and other like {@link #getUploadManager()} might not work properly.
      */
     boolean isFullyInitialized();
 
@@ -35,6 +35,6 @@ public interface BlobContext {
 
     void initServerApi(String serverUrl);
 
-    UploadHelper getUploadHelper();
+    UploadManager getUploadManager();
 
 }

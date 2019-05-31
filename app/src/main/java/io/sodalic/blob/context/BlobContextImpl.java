@@ -8,7 +8,7 @@ import android.util.Log;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
-import tracking.UploadHelper;
+import io.sodalic.blob.tracking.UploadManager;
 
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.storage.PersistentData;
@@ -27,13 +27,13 @@ public class BlobContextImpl implements BlobContext {
     private final Context rootContext;
 
     private ServerApi serverApi;
-    private final UploadHelper uploadHelper;
+    private final UploadManager uploadManager;
 
 
     public BlobContextImpl(Context context) {
         Objects.requireNonNull(context, "context");
         rootContext = context;
-        uploadHelper = new UploadHelper(this);
+        uploadManager = new UploadManager(this);
     }
 
     public void init() {
@@ -89,7 +89,7 @@ public class BlobContextImpl implements BlobContext {
     }
 
     @Override
-    public UploadHelper getUploadHelper() {
-        return uploadHelper;
+    public UploadManager getUploadManager() {
+        return uploadManager;
     }
 }

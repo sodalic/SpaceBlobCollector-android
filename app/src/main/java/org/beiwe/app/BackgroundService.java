@@ -432,7 +432,7 @@ public class BackgroundService extends Service {
             //starts a data upload attempt.
             if (broadcastAction.equals(appContext.getString(R.string.upload_data_files_intent))) {
                 if (blobContext.isFullyInitialized()) {
-                    blobContext.getUploadHelper().uploadAllFiles();
+                    blobContext.getUploadManager().uploadAllFiles();
                 } else {
                     Log.w(TAG, "Trying to upload by upload timer when Context is not initialized yet");
                 }
@@ -444,7 +444,7 @@ public class BackgroundService extends Service {
                 TextFileManager.makeNewFilesForEverything();
                 timer.setupExactSingleAlarm(PersistentData.getCreateNewDataFilesFrequencyMilliseconds(), Timer.createNewDataFilesIntent);
                 if (blobContext.isFullyInitialized()) {
-                    blobContext.getUploadHelper().uploadAllFiles();
+                    blobContext.getUploadManager().uploadAllFiles();
                 } else {
                     Log.w(TAG, "Trying to upload by new files timer when Context is not initialized yet");
                 }
@@ -493,7 +493,7 @@ public class BackgroundService extends Service {
                 if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                     // we've got wifi, try to upload files
                     if (blobContext.isFullyInitialized()) {
-                        blobContext.getUploadHelper().uploadAllFiles();
+                        blobContext.getUploadManager().uploadAllFiles();
                     }
                     return;
                 }

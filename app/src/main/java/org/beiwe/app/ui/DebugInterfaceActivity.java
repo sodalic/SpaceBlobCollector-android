@@ -154,7 +154,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 
 	//network operations
     public void uploadDataFiles(View view) {
-		getBlobContext().getUploadHelper().uploadAllFiles();
+		getBlobContext().getUploadManager().uploadAllFiles();
     }
 
 	public void runSurveyDownload(View view) { SurveyDownloader.downloadSurveys(getBlobContext()); }
