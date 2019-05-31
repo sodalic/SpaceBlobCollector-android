@@ -42,7 +42,7 @@ import org.beiwe.app.ui.user.AboutActivityLoggedOut;
  * @author Eli Jones, Josh Zagorsky
  */
 public abstract class RunningBackgroundServiceActivity extends AppCompatActivity {
-	private final String logTag = Utils.getLogTag(this.getClass());
+	protected final String logTag = Utils.getLogTag(this.getClass());
 
 
 	/** The backgroundService variable is an Activity's connection to the ... BackgroundService.

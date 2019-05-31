@@ -1,5 +1,10 @@
 package io.sodalic.blob.ui.registration;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,6 +14,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -25,6 +31,9 @@ import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.sharedui.BlobActivity;
 import io.sodalic.blob.sharedui.HttpUIAsync;
 import io.sodalic.blob.utils.Utils;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
 /**
@@ -93,6 +102,41 @@ public class RegisterFullActivity extends BlobActivity {
                 updateAdvancedFieldsVisibility(buttonView.isChecked());
             }
         });
+
+        // TODO SG: temporary code to track down a strange crash around registration that happened on May 31, 2019
+        // see also logic in CrashHandler regarding logCrashLocally
+        if(BuildConfig.APP_IS_BETA){
+            addCrashReportFields();
+        }
+    }
+
+    private void addCrashReportFields() {
+        String[] files = getFilesDir().list();
+        for (String fn : files) {
+            if (fn.contains("crashlog_")) {
+                Log.i(logTag, "Appending log from " + fn);
+                String all = readAll(getFilesDir() + "/" + fn);
+                LinearLayout main = findViewById(R.id.registerActivityMain);
+                main.addView(new View(this), new LinearLayout.LayoutParams(MATCH_PARENT, 50)); // separator
+                TextView tv = new TextView(this);
+                tv.setTextIsSelectable(true);
+                tv.setText(all);
+                main.addView(tv, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+            }
+        }
+    }
+
+    private static String readAll(String fileName) {
+        StringBuilder res = new StringBuilder();
+        try (BufferedReader ir = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))) {
+            String line;
+            while (null != (line = ir.readLine())) {
+                res.append(line);
+            }
+            return res.toString();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     private void updateAdvancedFieldsVisibility(boolean show) {
