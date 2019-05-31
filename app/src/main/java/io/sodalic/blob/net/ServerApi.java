@@ -15,9 +15,9 @@ import org.json.JSONObject;
 
 import org.beiwe.app.CrashHandler;
 import org.beiwe.app.DeviceInfo;
-import org.beiwe.app.networking.PostRequest;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.storage.SetDeviceSettings;
+import org.beiwe.app.storage.TextFileManager;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
@@ -166,9 +166,7 @@ public class ServerApi {
         try {
             JSONObject responseJSON = new JSONObject(responseBody);
             String key = responseJSON.getString("client_public_key");
-            int code = PostRequest.writeKey(key, 0);
-            if (code != 0)
-                throw new ServerException(code, "Server returned bad key");
+            savePublicKey(key);
             JSONObject deviceSettings = responseJSON.getJSONObject("device_settings");
             SetDeviceSettings.writeDeviceSettings(deviceSettings);
             String patient_id = responseJSON.getString("patient_id");
@@ -178,6 +176,16 @@ public class ServerApi {
             CrashHandler.writeCrashlog(e, androidContext);
             throw new ServerException(e);
         }
+    }
+
+    private static void savePublicKey(String key) throws ServerException {
+        if (!key.startsWith("MIIBI")) {
+            Log.w(TAG, "Bad key '" + key + "'");
+            //TODO SG: 2 is the code originally used here. It is handled in AlertsManager
+            throw new ServerException(2, "Server returned bad key");
+        }
+        TextFileManager.getKeyFile().deleteSafely();
+        TextFileManager.getKeyFile().safeWritePlaintext(key);
     }
 
 

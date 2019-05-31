@@ -100,35 +100,12 @@ public class PostRequest {
 		return connection;
 	}
 
-	/**Reads in the response data from an HttpURLConnection, returns it as a String.
-	 * @param connection an HttpURLConnection
-	 * @return a String containing return data
-	 * @throws IOException */
-	private static String readResponse(HttpURLConnection connection) throws IOException {
-		Integer responseCode = connection.getResponseCode();
-		if (responseCode == 200) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader( new DataInputStream( connection.getInputStream() ) ) );
-			String line;
-			StringBuilder response = new StringBuilder();
-			while ( (line = reader.readLine() ) != null) { response.append(line); }
-			return response.toString();
-		}
-		return responseCode.toString();
-	}
 
 
 	/*##################################################################################
 	 ####################### Actual Post Request Functions #############################
 	 #################################################################################*/
 	
-	private static String doPostRequestGetResponseString(String parameters, String urlString) throws IOException {
-		HttpURLConnection connection = setupHTTP( parameters, new URL( urlString ), null );
-		connection.connect();
-		String data = readResponse(connection);
-		connection.disconnect();
-		return data;
-	}
-
 
 	private static int doPostRequestGetResponseCode(String parameters, URL url, String newPassword) throws IOException {
 		HttpURLConnection connection = setupHTTP(parameters, url, newPassword);
@@ -137,56 +114,6 @@ public class PostRequest {
 		return response;
 	}
 
-
-	private static int doRegisterRequest(String parameters, URL url) throws IOException {
-	    return doRegisterRequestEx(parameters,url,null);
-    }
-
-    private static int doRegisterRequestEx(String parameters, URL url, String password) throws IOException {
-		HttpURLConnection connection = setupHTTP(parameters, url, null);
-		int response = connection.getResponseCode();
-		if ( response == 200 ) {
-			String responseBody = readResponse(connection);
-			try {
-				JSONObject responseJSON = new JSONObject(responseBody);
-				String key = responseJSON.getString("client_public_key");
-				writeKey(key, response);
-				JSONObject deviceSettings = responseJSON.getJSONObject("device_settings");
-				SetDeviceSettings.writeDeviceSettings(deviceSettings);
-                Log.i("RegisterFull", "Response = '"+responseBody + "'");
-                if (password != null) {
-                    String patient_id = responseJSON.getString("patient_id");
-                    PersistentData.setLoginCredentials(patient_id, password);
-                    Log.i("RegisterFull", "patient_id = '"+patient_id + "'");
-                }
-            } catch (JSONException e) {
-                CrashHandler.writeCrashlog(e, appContext);
-            }
-		}
-		connection.disconnect();
-		return response;
-	}
-
-	// Simple registration that does not parse response data.
-	// This is used for resubmitting non anonymized identifier data during registration
-	private static int doRegisterRequestSimple(String parameters, URL url) throws IOException {
-		HttpURLConnection connection = setupHTTP(parameters, url, null);
-		int response = connection.getResponseCode();
-		String responseBody = readResponse(connection);
-		connection.disconnect();
-		return response;
-	}
-	
-	public static int writeKey(String key, int httpResponse) {
-		if ( !key.startsWith("MIIBI") ) {
-			Log.e("PostRequest - register", " Received an invalid encryption key from server: " + key );
-			return 2; }
-		// Log.d( "PostRequest", "Received a key: " + key );
-		TextFileManager.getKeyFile().deleteSafely();
-		TextFileManager.getKeyFile().safeWritePlaintext( key );
-		return httpResponse;
-	}
-	
 
 
 	//#######################################################################################
