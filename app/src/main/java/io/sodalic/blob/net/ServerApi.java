@@ -157,6 +157,10 @@ public class ServerApi {
     //////////////////////////////////////////////////
     //// public API
 
+    public String getBaseServerUrl() {
+        return baseServerUrl;
+    }
+
     private static void addDeviceInfoParams(FormBody.Builder formBodyBuilder) {
         // The logic of hashing various parameters is affected by PersistentData.getUseAnonymizedHashing()
         formBodyBuilder.add("device_os", "Android");

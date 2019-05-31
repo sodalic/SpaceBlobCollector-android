@@ -1,33 +1,8 @@
 package org.beiwe.app.ui;
 
-import java.io.File;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.List;
-
-import android.app.Activity;
-import android.widget.Toast;
-import io.sodalic.blob.context.BlobContext;
-import io.sodalic.blob.sharedui.HttpBgAsync;
-import io.sodalic.blob.sharedui.HttpUIAsync;
-import io.sodalic.blob.utils.Utils;
-import org.beiwe.app.BackgroundService;
-import io.sodalic.blob.BuildConfig;
-import org.beiwe.app.CrashHandler;
-import org.beiwe.app.PermissionHandler;
-import io.sodalic.blob.R;
-import org.beiwe.app.Timer;
-import org.beiwe.app.networking.PostRequest;
-import org.beiwe.app.networking.SurveyDownloader;
-import org.beiwe.app.session.SessionActivity;
-import org.beiwe.app.storage.EncryptionEngine;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.storage.TextFileManager;
-import org.beiwe.app.survey.JsonSkipLogic;
-import org.beiwe.app.ui.user.MainMenuActivity;
-import org.beiwe.app.ui.utils.SurveyNotifications;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +11,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import org.beiwe.app.BackgroundService;
+import org.beiwe.app.CrashHandler;
+import org.beiwe.app.PermissionHandler;
+import org.beiwe.app.Timer;
+import org.beiwe.app.networking.SurveyDownloader;
+import org.beiwe.app.session.SessionActivity;
+import org.beiwe.app.storage.EncryptionEngine;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.storage.TextFileManager;
+import org.beiwe.app.survey.JsonSkipLogic;
+import org.beiwe.app.ui.user.MainMenuActivity;
+import org.beiwe.app.ui.utils.SurveyNotifications;
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
+import io.sodalic.blob.utils.Utils;
 
 
 public class DebugInterfaceActivity extends SessionActivity {

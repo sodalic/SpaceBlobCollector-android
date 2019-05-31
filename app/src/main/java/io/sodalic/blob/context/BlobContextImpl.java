@@ -1,22 +1,22 @@
 package io.sodalic.blob.context;
 
+import java.util.Objects;
+
 import android.content.Context;
 import android.util.Log;
+
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
 import tracking.UploadHelper;
 
+import org.beiwe.app.CrashHandler;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.storage.TextFileManager;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.storage.TextFileManager;
-import org.beiwe.app.networking.PostRequest;
-import org.beiwe.app.CrashHandler;
-
-import java.util.Objects;
 
 /**
  * The main and actual implementation of the {@link BlobContext} interface
@@ -49,7 +49,6 @@ public class BlobContextImpl implements BlobContext {
 
         PersistentData.initialize(rootContext);
         TextFileManager.initialize(rootContext);
-        PostRequest.initialize(rootContext);
 
         if (PersistentData.isRegistered()) {
             String serverUrl = PersistentData.getServerUrl();

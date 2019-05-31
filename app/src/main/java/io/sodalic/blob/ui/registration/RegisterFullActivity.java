@@ -131,9 +131,6 @@ public class RegisterFullActivity extends BlobActivity {
             AlertsManager.showAlert(getString(R.string.password_mismatch), getString(R.string.couldnt_register), this);
             return;
         } else {
-            if (BuildConfig.CUSTOMIZABLE_SERVER_URL) {
-                PersistentData.setServerUrl(serverUrl);
-            }
             tryToRegisterWithTheServer(this, serverUrl,
                     userName, password, studyId);
         }
@@ -153,6 +150,8 @@ public class RegisterFullActivity extends BlobActivity {
                 blobContext.initServerApi(serverUrl);
                 final ServerApi serverApi = blobContext.getServerApi();
                 serverApi.sendRegisterFull(userName, password, studyId);
+                // save after success
+                PersistentData.setServerUrl(serverUrl);
 
                 // Getting here means sendRegisterFull was successful
                 // If we are not using anonymized hashing, resubmit the phone identifying information
