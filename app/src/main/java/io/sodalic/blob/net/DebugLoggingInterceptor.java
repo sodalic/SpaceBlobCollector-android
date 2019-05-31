@@ -6,14 +6,12 @@ import java.io.InputStreamReader;
 
 import android.util.Log;
 
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 import okio.Buffer;
 
 /**
- * Created by SergGr on 31.05.2019.
+ * OkHttp interceptor that logs (almost) every request and response.
+ * It should only be used in dev builds.
  */
 class DebugLoggingInterceptor implements Interceptor {
     private final String TAG;
@@ -34,12 +32,13 @@ class DebugLoggingInterceptor implements Interceptor {
 
         Log.i(ServerApi.TAG, String.format("Sending request %s on %s%n%s",
                 request.url(), chain.connection(), request.headers()));
-        if (shouldLogBody && (request.body() != null)) {
-            RequestBody body = request.body();
+        RequestBody requestBody = request.body();
+        // don't log file upload anyway!
+        if (shouldLogBody && (requestBody != null) && !(requestBody instanceof MultipartBody)) {
             // Currently Buffer.close does nothing but who knows about the future
             try (Buffer buffer = new Buffer()) {
                 BufferedReader reader;
-                body.writeTo(buffer);
+                requestBody.writeTo(buffer);
                 buffer.flush();
                 reader = new BufferedReader(new InputStreamReader(buffer.inputStream()));
                 String line = null;
