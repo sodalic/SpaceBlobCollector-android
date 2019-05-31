@@ -8,14 +8,8 @@ import java.net.URL;
 import android.content.Context;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import org.beiwe.app.CrashHandler;
 import org.beiwe.app.DeviceInfo;
 import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.storage.SetDeviceSettings;
-import org.beiwe.app.storage.TextFileManager;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.R;
 
@@ -129,7 +123,7 @@ public class PostRequest {
 	public static String securityParameters(String newPassword) {
 		String patientId = PersistentData.getPatientID();
 		String deviceId = DeviceInfo.getAndroidID();
-		String password = PersistentData.getPassword();
+		String password = PersistentData.getPasswordHash();
 		if (newPassword != null) password = newPassword;
 
 		return makeParameter("patient_id", patientId) +

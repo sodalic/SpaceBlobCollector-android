@@ -135,15 +135,17 @@ public class PersistentData {
 	 * @param input
 	 * @param input
 	 * @return */
-	public static boolean checkPassword(String input){ return ( getPassword().equals( EncryptionEngine.safeHash(input) ) ); }
+	public static boolean checkPassword(String input){ return ( getPasswordHash().equals( EncryptionEngine.safeHash(input) ) ); }
 
-	/**Sets a password to a hash of the provided value.
-	 * @param password */
-	public static void setPassword(String password) {
-		editor.putString(KEY_PASSWORD, EncryptionEngine.safeHash(password) );
+	/**
+	 * Saves a pre-calculated hash of the password.
+	 *
+	 * @param passwordHash Hash generated with {@link EncryptionEngine#safeHash(String)}
+	 */
+	public static void savePasswordHashDirectly(String passwordHash) {
+		editor.putString(KEY_PASSWORD, passwordHash);
 		editor.commit();
 	}
-
 	
 	/*#####################################################################################
 	################################# Listener Settings ###################################
@@ -326,10 +328,10 @@ public class PersistentData {
 	public static void setLoginCredentials( String userID, String password ) {
 		if (editor == null) Log.e("LoginManager.java", "editor is null in setLoginCredentials()");
 		editor.putString(KEY_ID, userID);
-		setPassword(password);
+		savePasswordHashDirectly(EncryptionEngine.safeHash(password));
 		editor.commit(); }
 
-	public static String getPassword() { return pref.getString( KEY_PASSWORD, null ); }
+	public static String getPasswordHash() { return pref.getString( KEY_PASSWORD, null ); }
 	public static String getPatientID() { return pref.getString(KEY_ID, NULL_ID); }
 
 	public static String getUserName() {

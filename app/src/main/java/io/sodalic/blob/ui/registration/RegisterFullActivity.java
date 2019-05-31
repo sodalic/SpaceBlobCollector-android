@@ -4,15 +4,20 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.*;
+
+import org.beiwe.app.DeviceInfo;
+import org.beiwe.app.PermissionHandler;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.survey.TextFieldKeyboard;
+import org.beiwe.app.ui.registration.ConsentFormActivity;
+import org.beiwe.app.ui.utils.AlertsManager;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.R;
 import io.sodalic.blob.context.BlobContext;
@@ -20,14 +25,6 @@ import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.sharedui.BlobActivity;
 import io.sodalic.blob.sharedui.HttpUIAsync;
 import io.sodalic.blob.utils.Utils;
-import org.beiwe.app.DeviceInfo;
-import org.beiwe.app.PermissionHandler;
-import org.beiwe.app.networking.PostRequest;
-import org.beiwe.app.storage.EncryptionEngine;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.survey.TextFieldKeyboard;
-import org.beiwe.app.ui.registration.ConsentFormActivity;
-import org.beiwe.app.ui.utils.AlertsManager;
 
 
 /**
@@ -154,7 +151,7 @@ public class RegisterFullActivity extends BlobActivity {
                 DeviceInfo.initialize(activity.getApplicationContext());
 
                 blobContext.initServerApi(serverUrl);
-                ServerApi serverApi = blobContext.getServerApi();
+                final ServerApi serverApi = blobContext.getServerApi();
                 serverApi.sendRegisterFull(userName, password, studyId);
 
                 // Getting here means sendRegisterFull was successful
@@ -168,9 +165,6 @@ public class RegisterFullActivity extends BlobActivity {
 
             @Override
             protected void handleSuccess(Void result) {
-                PersistentData.setUserName(userName);
-                //TODO SG: now it is a partial duplicate of the PostRequest.doRegisterRequestEx/ServerApi.sendRegisterFull logic
-                PersistentData.setPassword(password);
                 activity.startActivity(new Intent(activity, ConsentFormActivity.class));
                 activity.finish();
             }

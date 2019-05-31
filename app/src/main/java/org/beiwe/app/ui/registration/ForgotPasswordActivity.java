@@ -6,16 +6,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import io.sodalic.blob.R;
-import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.session.ResetPassword;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.survey.TextFieldKeyboard;
+import io.sodalic.blob.R;
+import io.sodalic.blob.sharedui.BlobActivity;
 
 /**
  * @author Dor Samet, Eli Jones
  */
-public class ForgotPasswordActivity extends RunningBackgroundServiceActivity {
+public class ForgotPasswordActivity extends BlobActivity {
 	private EditText tempPasswordInput;
 	private EditText newPasswordInput;
 	private EditText confirmNewPasswordInput;

@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import io.sodalic.blob.R;
-import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.session.ResetPassword;
 import org.beiwe.app.survey.TextFieldKeyboard;
+import io.sodalic.blob.R;
+import io.sodalic.blob.sharedui.BlobActivity;
 
 /**
  * An activity to manage users who forgot their passwords.
@@ -16,7 +16,7 @@ import org.beiwe.app.survey.TextFieldKeyboard;
  */
 
 @SuppressLint("ShowToast")
-public class ResetPasswordActivity extends RunningBackgroundServiceActivity {
+public class ResetPasswordActivity extends BlobActivity {
 	private EditText currentPasswordInput;
 	private EditText newPasswordInput;
 	private EditText confirmNewPasswordInput;
