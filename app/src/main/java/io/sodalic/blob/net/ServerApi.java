@@ -27,7 +27,7 @@ import io.sodalic.blob.utils.Utils;
  * Class that exposes the API provided by the server-side
  */
 public class ServerApi {
-    private static final String TAG = Utils.getLogTag(ServerApi.class);
+    static final String TAG = Utils.getLogTag(ServerApi.class);
 
     private static final int MAX_LOG_BODY_LEN = 1000;
 
@@ -35,9 +35,11 @@ public class ServerApi {
     // Let's use some fair description
     private static final MediaType MEDIA_TYPE_FILE_UPLOAD = MediaType.get("text/x.csv-encrypted");
 
-    private final OkHttpClient client = new OkHttpClient();
     private final Context androidContext;
     private final String baseServerUrl;
+
+    private final OkHttpClient client;
+
 
     public ServerApi(Context androidContext, String baseServerUrl) {
         Objects.requireNonNull(androidContext);
@@ -45,6 +47,14 @@ public class ServerApi {
         this.androidContext = androidContext;
         this.baseServerUrl = fixUrl(baseServerUrl);
         Log.i(TAG, String.format("Init ServerApi for '%s' => '%s'", baseServerUrl, this.baseServerUrl));
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        // enabling logging effectively means we are sharing it with the whole world
+        if (BuildConfig.APP_IS_DEV && BuildConfig.ALLOW_INSECURE_CONNECTION) {
+            builder.addInterceptor(new DebugLoggingInterceptor(false, true));
+//            builder.addNetworkInterceptor(new DebugLoggingInterceptor(true, true));
+        }
+        client = builder.build();
     }
 
     private static String fixUrl(String serverUrl) {
@@ -98,21 +108,36 @@ public class ServerApi {
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     //// legacy authentication
-    private static Map<String, String> buildSecurityParameters(String newPassword) {
-        String patientId = PersistentData.getPatientID();
-        String deviceId = DeviceInfo.getAndroidID();
-        String password = PersistentData.getPassword();
-        if (newPassword != null) password = newPassword;
+
+    /**
+     * @param explicitPasswordHash an optional parameter to explicitly override the stored hash with some user-provided value
+     */
+    private static Map<String, String> buildSecurityParameters(String explicitPasswordHash) {
+        // TODO SG: refactor to make this logic more clear, see also:
+        //  - sendRegisterFull
+        //  - sendRegisterAgain
+        //  - sendSetPassword
+        //  - EncryptionEngine.safeHash()
+        // The actual user password is only sent to the server when the password is changed.
+        // For the authentication password hash is saved and sent to the server.
+        // On the server the original password is hashed 2 times:
+        // 1) the same way as it is done on the client to save in the local storage
+        // 2) this hashed password is treated as the real password and then it is hashed with
+        //    a salt and that salted hash is stored in the DB.
+        //
+        // Originally the field sent for authentication was also called "password" which
+        // caused some confusion. Now "password" and "password_hash" use different names.
+        String passwordHash = (explicitPasswordHash != null) ? explicitPasswordHash : PersistentData.getPasswordHash();
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("patient_id", patientId);
-        params.put("password", password);
-        params.put("device_id", deviceId);
+        params.put("patient_id", PersistentData.getPatientID());
+        params.put("password_hash", passwordHash);
+        params.put("device_id", DeviceInfo.getAndroidID());
         return params;
     }
 
-    private static void addSecurityParameters(FormBody.Builder formBodyBuilder, String newPassword) {
-        Map<String, String> params = buildSecurityParameters(newPassword);
+    private static void addSecurityParameters(FormBody.Builder formBodyBuilder, String explicitPasswordHash) {
+        Map<String, String> params = buildSecurityParameters(explicitPasswordHash);
         for (Map.Entry<String, String> e : params.entrySet()) {
             formBodyBuilder.add(e.getKey(), e.getValue());
         }
@@ -169,9 +194,15 @@ public class ServerApi {
             savePublicKey(key);
             JSONObject deviceSettings = responseJSON.getJSONObject("device_settings");
             SetDeviceSettings.writeDeviceSettings(deviceSettings);
-            String patient_id = responseJSON.getString("patient_id");
-            Log.i(TAG, "patient_id = '" + patient_id + "'");
-            PersistentData.setLoginCredentials(patient_id, password);
+            String patientId = responseJSON.getString("patient_id");
+            Log.i(TAG, "patient_id = '" + patientId + "'");
+
+
+            // TODO SG: We need to do it here because of the re-register scenario
+            // that requires the authentication data
+            PersistentData.setLoginCredentials(patientId, password);
+            PersistentData.setUserName(userName);
+
         } catch (JSONException e) {
             CrashHandler.writeCrashlog(e, androidContext);
             throw new ServerException(e);
@@ -200,7 +231,23 @@ public class ServerApi {
         addSecurityParameters(formBodyBuilder);
         addDeviceInfoParams(formBodyBuilder);
 
-        String responseBody = sendSimplePost("/register_user", formBodyBuilder.build());
+        sendSimplePost("/register_user", formBodyBuilder.build());
+    }
+
+    /**
+     * This is the request to change user's password
+     *
+     * @param currentPasswordHash Hash of the old password generated with {@link org.beiwe.app.storage.EncryptionEngine#safeHash(String)}.
+     *                            Old password is passed to the server to check there, rather than doing just client-side check.
+     * @param newPassword     New password as entered by the user
+     */
+    public void sendSetPassword(String currentPasswordHash, String newPassword) throws ServerException {
+        FormBody.Builder formBodyBuilder = new FormBody.Builder()
+                .add("new_password", newPassword);
+
+        addSecurityParameters(formBodyBuilder, currentPasswordHash);
+
+        sendSimplePost("/set_password", formBodyBuilder.build());
     }
 
     /**
@@ -209,9 +256,7 @@ public class ServerApi {
     public String downloadSurveys() throws ServerException {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
         addSecurityParameters(formBodyBuilder);
-
-        String responseBody = sendSimplePost("/download_surveys", formBodyBuilder.build());
-        return responseBody;
+        return sendSimplePost("/download_surveys", formBodyBuilder.build());
     }
 
     /**
