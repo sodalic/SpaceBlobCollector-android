@@ -1,7 +1,6 @@
 package io.sodalic.blob.net;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -10,6 +9,7 @@ import android.content.Context;
 import android.util.Log;
 
 import okhttp3.*;
+import okio.Buffer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -239,7 +239,7 @@ public class ServerApi {
      *
      * @param currentPasswordHash Hash of the old password generated with {@link org.beiwe.app.storage.EncryptionEngine#safeHash(String)}.
      *                            Old password is passed to the server to check there, rather than doing just client-side check.
-     * @param newPassword     New password as entered by the user
+     * @param newPassword         New password as entered by the user
      */
     public void sendSetPassword(String currentPasswordHash, String newPassword) throws ServerException {
         FormBody.Builder formBodyBuilder = new FormBody.Builder()
@@ -278,4 +278,36 @@ public class ServerApi {
         sendSimplePost("/upload", multipartBuilder.build());
     }
 
+    public static final class UrlPostData {
+        public final String url;
+        public final byte[] postData;
+
+        public UrlPostData(String url, byte[] postData) {
+            this.url = url;
+            this.postData = postData;
+        }
+    }
+
+    public UrlPostData getSurveyGraphUrlAndData() {
+        String url = baseServerUrl + "/graph";
+//        Map<String, String> securityParameters = buildSecurityParameters(null);
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        addSecurityParameters(formBodyBuilder);
+        FormBody formBody = formBodyBuilder.build();
+        byte[] postData = getRequestBodyBytes(formBody);
+        return new UrlPostData(url, postData);
+    }
+
+    private static byte[] getRequestBodyBytes(RequestBody body) {
+        try (Buffer buffer = new Buffer()) {
+            body.writeTo(buffer);
+            buffer.flush();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            buffer.copyTo(bos);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            Log.e(TAG, "Request body encoding has failed");
+            throw new RuntimeException(e);
+        }
+    }
 }

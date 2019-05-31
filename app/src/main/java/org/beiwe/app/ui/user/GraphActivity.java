@@ -1,8 +1,7 @@
 package org.beiwe.app.ui.user;
 
-import org.apache.http.util.EncodingUtils;
 import io.sodalic.blob.R;
-import org.beiwe.app.networking.PostRequest;
+import io.sodalic.blob.net.ServerApi;
 import org.beiwe.app.session.SessionActivity;
 import org.beiwe.app.storage.PersistentData;
 
@@ -14,8 +13,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-import static org.beiwe.app.networking.PostRequest.addWebsitePrefix;
-
 /**
  * The activity that shows the graph to the user. Displays the Beiwe webpage that houses the graph.
  * It also features the options to call clinician, as well as immediate sign out
@@ -24,7 +21,6 @@ import static org.beiwe.app.networking.PostRequest.addWebsitePrefix;
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class GraphActivity extends SessionActivity {
-	//extends SessionActivity
 
 	/**
 	 * Loads the web view by sending an HTTP POST to the website. Currently not in HTTPS
@@ -65,10 +61,10 @@ public class GraphActivity extends SessionActivity {
 //		browser.setOverScrollMode(android.view.View.OVER_SCROLL_ALWAYS);
 		browser.setNetworkAvailable(true);
 
-		//TODO: Low priority. Eli. find a way to Kill this use of securityparameters, make securityparameters private.
-		String postData = PostRequest.securityParameters(null);
-		String graphUrl = addWebsitePrefix(getApplicationContext().getString(R.string.graph_url));
-		browser.postUrl(graphUrl, EncodingUtils.getBytes(postData, "BASE64"));
+		ServerApi serverApi = getBlobContext().getServerApi();
+
+		ServerApi.UrlPostData surveyGraphUrlAndData = serverApi.getSurveyGraphUrlAndData();
+		browser.postUrl(surveyGraphUrlAndData.url, surveyGraphUrlAndData.postData);
 	}
 
 }
