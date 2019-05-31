@@ -152,7 +152,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 		case R.id.menu_about:
-			startActivity(new Intent(getApplicationContext(), AboutActivityLoggedOut.class));
+			startActivity(new Intent(this, AboutActivityLoggedOut.class));
 			return true;
 		case R.id.menu_call_clinician:
 			callClinician(null);

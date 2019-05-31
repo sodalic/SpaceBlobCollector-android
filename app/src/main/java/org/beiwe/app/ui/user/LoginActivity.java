@@ -56,7 +56,7 @@ public class LoginActivity extends RunningBackgroundServiceActivity {
 	/**Move user to the forgot password activity.
 	 * @param view */
 	public void forgotPassword(View view) {
-		startActivity( new Intent(appContext, ForgotPasswordActivity.class) );
+		startActivity( new Intent(this, ForgotPasswordActivity.class) );
 		finish();
 	}
 	

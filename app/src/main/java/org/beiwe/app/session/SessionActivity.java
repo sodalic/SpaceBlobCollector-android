@@ -5,11 +5,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.sharedui.BlobActivity;
 import org.beiwe.app.BackgroundService;
 import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.ui.DebugInterfaceActivity;
 import org.beiwe.app.ui.registration.ResetPasswordActivity;
 import org.beiwe.app.ui.user.AboutActivityLoggedIn;
 import org.beiwe.app.ui.user.GraphActivity;
@@ -26,7 +28,7 @@ public class SessionActivity extends BlobActivity {
 	/*####################################################################
 	########################## Log-in Logic ##############################
 	####################################################################*/
-	
+
 	/** when onResume is called we need to authenticate the user and
 	 * bump them to the login screen if they have timed out. */
 	@Override
@@ -35,7 +37,7 @@ public class SessionActivity extends BlobActivity {
 		PersistentData.initialize(getApplicationContext()); // this function has been rewritten to efficiently handle getting called too much.  Don't worry about it.
 		checkPermissionsLogic();
 	}
-	
+
 	/** When onPause is called we need to set the timeout. */
 	@Override
 	protected void onPause() {
@@ -53,14 +55,14 @@ public class SessionActivity extends BlobActivity {
 			BackgroundService.clearAutomaticLogoutCountdownTimer(); }
 		else { Log.w("SessionActivity bug","the background service was not running, could not cancel UI bump to login screen."); }
 	}
-	
+
 	@Override
 	/** Sets the logout timer, should trigger whenever onResume is called. */
 	protected void doBackgroundDependentTasks() {
 		// Log.i("SessionActivity", "printed from SessionActivity");
 		authenticateAndLoginIfNecessary();
 	}
-	
+
 	/** If the user is NOT logged in, take them to the login page */
 	protected void authenticateAndLoginIfNecessary() {
 		if ( PersistentData.isLoggedIn() ) {
@@ -79,7 +81,7 @@ public class SessionActivity extends BlobActivity {
 	/*####################################################################
 	########################## Common UI #################################
 	####################################################################*/
-	
+
 	/** Sets up the contents of the menu button. */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,6 +93,9 @@ public class SessionActivity extends BlobActivity {
 		else {
 			menu.findItem(R.id.menu_call_clinician).setVisible(false);
 		}
+        if (!BuildConfig.APP_IS_BETA || (this instanceof DebugInterfaceActivity)) {
+            menu.findItem(R.id.menu_show_debug).setVisible(false);
+        }
 
 		if(!PersistentData.getCallResearchAssistantButtonEnabled()) {
 			menu.findItem(R.id.menu_call_research_assistant).setVisible(false);
@@ -106,16 +111,20 @@ public class SessionActivity extends BlobActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (item.getItemId()) {
 		case R.id.menu_change_password:
-			startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
+			startActivity(new Intent(this, ResetPasswordActivity.class));
 			return true;
 		case R.id.menu_signout:
 			logoutUser();
 			return true;
 		case R.id.menu_about:
-			startActivity(new Intent(getApplicationContext(), AboutActivityLoggedIn.class));
+			startActivity(new Intent(this, AboutActivityLoggedIn.class));
 			return true;
 		case R.id.view_survey_answers:
-			startActivity(new Intent(getApplicationContext(), GraphActivity.class));
+			startActivity(new Intent(this, GraphActivity.class));
+			return true;
+		case R.id.menu_show_debug:
+			startActivity(new Intent(this, DebugInterfaceActivity.class));
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
