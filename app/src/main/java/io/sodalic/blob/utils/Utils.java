@@ -25,14 +25,14 @@ public final class Utils {
 
 
     public static String getLogTag(Class clazz) {
-        String simpleName = clazz.getSimpleName()
-                .replace("io.sodalic.blob", "isb.")
-                .replace("org.beiwe.app", "oba.");
+        String simpleName = clazz.getName()
+                .replace("io.sodalic.blob.", "isb.")
+                .replace("org.beiwe.app.", "oba.");
         String[] parts = simpleName.split("[\\.]");
         ArrayList<String> shortParts = new ArrayList<String>();
         for (int i = 0; i < parts.length - 1; i++) {
             String part = parts[i];
-            String shortPart = (part.length() > 3) ? part.substring(0, 1) : part;
+            String shortPart = (part.length() > 3) ? part.substring(0, 2) : part;
             shortParts.add(shortPart);
         }
         // add full class name
