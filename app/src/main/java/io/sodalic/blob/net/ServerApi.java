@@ -27,7 +27,7 @@ import io.sodalic.blob.utils.Utils;
  * Class that exposes the API provided by the server-side
  */
 public class ServerApi {
-    static final String TAG = Utils.getLogTag(ServerApi.class);
+    private static final String TAG = Utils.getLogTag(ServerApi.class);
 
     private static final int MAX_LOG_BODY_LEN = 1000;
 
@@ -51,7 +51,7 @@ public class ServerApi {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         // enabling logging effectively means we are sharing it with the whole world
         if (BuildConfig.APP_IS_DEV && BuildConfig.ALLOW_INSECURE_CONNECTION) {
-            builder.addInterceptor(new DebugLoggingInterceptor(false, true));
+            builder.addInterceptor(new DebugLoggingInterceptor(TAG, false, true));
 //            builder.addNetworkInterceptor(new DebugLoggingInterceptor(true, true));
         }
         client = builder.build();

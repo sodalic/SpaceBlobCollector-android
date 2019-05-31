@@ -13,14 +13,14 @@ import okio.Buffer;
  * OkHttp interceptor that logs (almost) every request and response.
  * It should only be used in dev builds.
  */
-class DebugLoggingInterceptor implements Interceptor {
+public class DebugLoggingInterceptor implements Interceptor {
     private final String TAG;
     private final boolean isNetwork;
     private final boolean shouldLogBody;
 
-    DebugLoggingInterceptor(boolean isNetwork, boolean logBody) {
+    public DebugLoggingInterceptor(String baseTag, boolean isNetwork, boolean logBody) {
         this.isNetwork = isNetwork;
-        TAG = ServerApi.TAG + ((isNetwork) ? "_Net" : "_App");
+        TAG = baseTag + ((isNetwork) ? "_Net" : "_App");
         this.shouldLogBody = logBody;
     }
 
@@ -30,7 +30,7 @@ class DebugLoggingInterceptor implements Interceptor {
 
         long t1 = System.nanoTime();
 
-        Log.i(ServerApi.TAG, String.format("Sending request %s on %s%n%s",
+        Log.i(TAG, String.format("Sending request %s on %s%n%s",
                 request.url(), chain.connection(), request.headers()));
         RequestBody requestBody = request.body();
         // don't log file upload anyway!
@@ -43,16 +43,16 @@ class DebugLoggingInterceptor implements Interceptor {
                 reader = new BufferedReader(new InputStreamReader(buffer.inputStream()));
                 String line = null;
                 while (null != (line = reader.readLine())) {
-                    Log.i(ServerApi.TAG, line);
+                    Log.i(TAG, line);
                 }
             }
-            Log.i(ServerApi.TAG, "---------------------------------");
+            Log.i(TAG, "---------------------------------");
         }
 
         Response response = chain.proceed(request);
 
         long t2 = System.nanoTime();
-        Log.i(ServerApi.TAG, String.format("Received response for %s in %.1fms%n%s",
+        Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
                 response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
         return response;
