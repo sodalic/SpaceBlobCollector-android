@@ -36,13 +36,16 @@ class DebugLoggingInterceptor implements Interceptor {
                 request.url(), chain.connection(), request.headers()));
         if (shouldLogBody && (request.body() != null)) {
             RequestBody body = request.body();
-            Buffer buffer = new Buffer();
-            body.writeTo(buffer);
-            buffer.flush();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(buffer.inputStream()));
-            String line = null;
-            while (null != (line = reader.readLine())) {
-                Log.i(ServerApi.TAG, line);
+            // Currently Buffer.close does nothing but who knows about the future
+            try (Buffer buffer = new Buffer()) {
+                BufferedReader reader;
+                body.writeTo(buffer);
+                buffer.flush();
+                reader = new BufferedReader(new InputStreamReader(buffer.inputStream()));
+                String line = null;
+                while (null != (line = reader.readLine())) {
+                    Log.i(ServerApi.TAG, line);
+                }
             }
             Log.i(ServerApi.TAG, "---------------------------------");
         }

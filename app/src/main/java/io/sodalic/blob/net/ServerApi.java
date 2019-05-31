@@ -299,6 +299,7 @@ public class ServerApi {
     }
 
     private static byte[] getRequestBodyBytes(RequestBody body) {
+        // Currently Buffer.close does nothing but who knows about the future
         try (Buffer buffer = new Buffer()) {
             body.writeTo(buffer);
             buffer.flush();
