@@ -27,6 +27,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import io.sodalic.blob.utils.Utils;
+
 /**The (Text)FileManager.
  * The FileManager is implemented as a Singleton.  More accurately the static object contains several
  * singletons, static instances of FileManager Objects.  Before using the FileManager the app must
@@ -41,6 +43,7 @@ import android.widget.Toast;
  * To access a file use the following construction: TextFileManager.getXXXFile()
  * @author Eli */
 public class TextFileManager { 
+	private static final String TAG = Utils.getLogTag(TextFileManager.class);
 
 	//Delimiter and newline strings
 	public static final String DELIMITER = ",";
@@ -365,12 +368,15 @@ public class TextFileManager {
 	
 	/** Deletes a file.  Exists to make file deletion thread-safe.
 	 * @param fileName */
-	public static synchronized void delete(String fileName){
-		try { appContext.deleteFile(fileName); }
-		catch (Exception e) {
-			Log.e("TextFileManager", "cannot delete file " + fileName );
+	public static synchronized void delete(String fileName) {
+		try {
+			Log.i(TAG, String.format("Deleting file '%s'", fileName));
+			appContext.deleteFile(fileName);
+		} catch (Exception e) {
+			Log.e("TextFileManager", "cannot delete file " + fileName);
 			e.printStackTrace();
-			CrashHandler.writeCrashlog(e, appContext); }
+			CrashHandler.writeCrashlog(e, appContext);
+		}
 	}
 	
 	/** Make new files for all the non-persistent files. */
@@ -416,7 +422,7 @@ public class TextFileManager {
 		files.remove(TextFileManager.getSurveyTimingsFile().fileName);
 		files.remove(TextFileManager.getWifiLogFile().fileName);
 
-		return files.toArray(new String[files.size()]);
+		return files.toArray(new String[0]);
 	}
 	
 	/*###############################################################################

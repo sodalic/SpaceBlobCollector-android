@@ -223,7 +223,6 @@ public class ServerApi {
                 .addFormDataPart("file_name", file.getName())
                 .addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_FILE_UPLOAD, file));
         sendSimplePost("/upload", multipartBuilder.build());
-        //TODO SG: remove file after successful upload
     }
 
 }

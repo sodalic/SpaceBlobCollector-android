@@ -3,28 +3,6 @@ package org.beiwe.app;
 import java.util.Calendar;
 import java.util.List;
 
-import io.sodalic.blob.BuildConfig;
-import io.sodalic.blob.R;
-
-import io.sodalic.blob.context.BlobContext;
-import io.sodalic.blob.context.BlobContextProxy;
-import io.sodalic.blob.utils.Utils;
-import org.beiwe.app.listeners.AccelerometerListener;
-import org.beiwe.app.listeners.BluetoothListener;
-import org.beiwe.app.listeners.CallLogger;
-import org.beiwe.app.listeners.GPSListener;
-import org.beiwe.app.listeners.MMSSentLogger;
-import org.beiwe.app.listeners.PowerStateListener;
-import org.beiwe.app.listeners.SmsSentLogger;
-import org.beiwe.app.listeners.WifiListener;
-import org.beiwe.app.networking.PostRequest;
-import org.beiwe.app.networking.SurveyDownloader;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.storage.TextFileManager;
-import org.beiwe.app.survey.SurveyScheduler;
-import org.beiwe.app.ui.user.LoginActivity;
-import org.beiwe.app.ui.utils.SurveyNotifications;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -37,16 +15,25 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.SystemClock;
+import android.os.*;
 import android.util.Log;
 
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
+
+import org.beiwe.app.listeners.*;
+import org.beiwe.app.networking.SurveyDownloader;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.storage.TextFileManager;
+import org.beiwe.app.survey.SurveyScheduler;
+import org.beiwe.app.ui.user.LoginActivity;
+import org.beiwe.app.ui.utils.SurveyNotifications;
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
+import io.sodalic.blob.context.BlobContext;
+import io.sodalic.blob.context.BlobContextProxy;
+import io.sodalic.blob.utils.Utils;
 
 public class BackgroundService extends Service {
     private static final String TAG = Utils.getLogTag(BackgroundService.class);
@@ -444,7 +431,11 @@ public class BackgroundService extends Service {
 
             //starts a data upload attempt.
             if (broadcastAction.equals(appContext.getString(R.string.upload_data_files_intent))) {
-                PostRequest.uploadAllFiles();
+                if (blobContext.isFullyInitialized()) {
+                    blobContext.getUploadHelper().uploadAllFiles();
+                } else {
+                    Log.w(TAG, "Trying to upload by upload timer when Context is not initialized yet");
+                }
                 timer.setupExactSingleAlarm(PersistentData.getUploadDataFilesFrequencyMilliseconds(), Timer.uploadDatafilesIntent);
                 return;
             }
@@ -452,7 +443,11 @@ public class BackgroundService extends Service {
             if (broadcastAction.equals(appContext.getString(R.string.create_new_data_files_intent))) {
                 TextFileManager.makeNewFilesForEverything();
                 timer.setupExactSingleAlarm(PersistentData.getCreateNewDataFilesFrequencyMilliseconds(), Timer.createNewDataFilesIntent);
-                PostRequest.uploadAllFiles();
+                if (blobContext.isFullyInitialized()) {
+                    blobContext.getUploadHelper().uploadAllFiles();
+                } else {
+                    Log.w(TAG, "Trying to upload by new files timer when Context is not initialized yet");
+                }
                 return;
             }
             //Downloads the most recent survey questions and schedules the surveys.
@@ -496,7 +491,10 @@ public class BackgroundService extends Service {
             if (PersistentData.isRegistered() && broadcastAction.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
                 if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-                    PostRequest.uploadAllFiles();
+                    // we've got wifi, try to upload files
+                    if (blobContext.isFullyInitialized()) {
+                        blobContext.getUploadHelper().uploadAllFiles();
+                    }
                     return;
                 }
             }

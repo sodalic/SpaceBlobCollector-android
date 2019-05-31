@@ -5,6 +5,8 @@ import android.util.Log;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
+import tracking.UploadHelper;
+
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.utils.StringUtils;
@@ -25,11 +27,13 @@ public class BlobContextImpl implements BlobContext {
     private final Context rootContext;
 
     private ServerApi serverApi;
+    private final UploadHelper uploadHelper;
 
 
     public BlobContextImpl(Context context) {
         Objects.requireNonNull(context, "context");
         rootContext = context;
+        uploadHelper = new UploadHelper(this);
     }
 
     public void init() {
@@ -69,6 +73,11 @@ public class BlobContextImpl implements BlobContext {
     }
 
     @Override
+    public boolean isFullyInitialized() {
+        return (serverApi != null);
+    }
+
+    @Override
     public ServerApi getServerApi() {
         Objects.requireNonNull(serverApi, "serverApi");
         return serverApi;
@@ -78,5 +87,10 @@ public class BlobContextImpl implements BlobContext {
     public void initServerApi(String serverUrl) {
         Objects.requireNonNull(serverUrl, "serverUrl");
         serverApi = new ServerApi(rootContext, serverUrl);
+    }
+
+    @Override
+    public UploadHelper getUploadHelper() {
+        return uploadHelper;
     }
 }

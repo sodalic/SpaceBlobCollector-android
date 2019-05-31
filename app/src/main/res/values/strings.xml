@@ -20,11 +20,9 @@
     <string name="staging_website">https://staging.beiwe.org </string>
     <string name="production_website">https://studies.beiwe.org </string>
 
-    <string name="data_upload_url">/upload</string>
     <string name="forgot_password_url">/forgot_password</string>
     <string name="reset_password_url">/set_password</string>
     <string name="graph_url">/graph</string>
-    <string name="register_url">/register_user</string>
 
     <!-- Recording Options Strings -->
     <string name="title_activity_audio_recorder">Make a Voice Recording</string>

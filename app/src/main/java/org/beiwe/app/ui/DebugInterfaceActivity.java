@@ -1,9 +1,15 @@
 package org.beiwe.app.ui;
 
+import java.io.File;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
+import android.widget.Toast;
+import io.sodalic.blob.context.BlobContext;
+import io.sodalic.blob.sharedui.HttpBgAsync;
+import io.sodalic.blob.sharedui.HttpUIAsync;
 import io.sodalic.blob.utils.Utils;
 import org.beiwe.app.BackgroundService;
 import io.sodalic.blob.BuildConfig;
@@ -35,7 +41,7 @@ import android.widget.TextView;
 public class DebugInterfaceActivity extends SessionActivity {
 	//extends a session activity.
 	Context appContext;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,16 +72,16 @@ public class DebugInterfaceActivity extends SessionActivity {
 		}
 
 	}
-	
+
 	//Intent triggers caught in BackgroundService
 	public void accelerometerOn (View view) { appContext.sendBroadcast( Timer.accelerometerOnIntent ); }
-	public void accelerometerOff (View view) { appContext.sendBroadcast( Timer.accelerometerOffIntent ); }	
+	public void accelerometerOff (View view) { appContext.sendBroadcast( Timer.accelerometerOffIntent ); }
 	public void gpsOn (View view) { appContext.sendBroadcast( Timer.gpsOnIntent ); }
 	public void gpsOff (View view) { appContext.sendBroadcast( Timer.gpsOffIntent ); }
 	public void scanWifi (View view) { appContext.sendBroadcast( Timer.wifiLogIntent ); }
 	public void bluetoothButtonStart (View view) { appContext.sendBroadcast(Timer.bluetoothOnIntent); }
 	public void bluetoothButtonStop (View view) { appContext.sendBroadcast(Timer.bluetoothOffIntent); }
-	
+
 	//raw debugging info
 	public void printInternalLog(View view) {
 		// Log.i("print log button pressed", "press.");
@@ -121,7 +127,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 			Log.i("most recent alarm state", "survey id: " + surveyId + ", " +PersistentData.getMostRecentSurveyAlarmTime(surveyId) + ", " + PersistentData.getSurveyNotificationState(surveyId)) ;
 		}
 	}
-	
+
 	public void getEnabledFeatures(View view) {
 		if ( PersistentData.getAccelerometerEnabled() ) { Log.i("features", "Accelerometer Enabled." ); } else { Log.e("features", "Accelerometer Disabled."); }
 		if ( PersistentData.getGpsEnabled() ) { Log.i("features", "Gps Enabled." ); } else { Log.e("features", "Gps Disabled."); }
@@ -131,7 +137,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 		if ( PersistentData.getBluetoothEnabled() ) { Log.i("features", "Bluetooth Enabled." ); } else { Log.e("features", "Bluetooth Disabled."); }
 		if ( PersistentData.getPowerStateEnabled() ) { Log.i("features", "PowerState Enabled." ); } else { Log.e("features", "PowerState Disabled."); }
 	}
-	
+
 	public void getPermissableFeatures(View view) {
 		if (PermissionHandler.checkAccessFineLocation(getApplicationContext())) { Log.i("permissions", "AccessFineLocation enabled."); } else { Log.e("permissions", "AccessFineLocation disabled."); }
 		if (PermissionHandler.checkAccessNetworkState(getApplicationContext())) { Log.i("permissions", "AccessNetworkState enabled."); } else { Log.e("permissions", "AccessNetworkState disabled."); }
@@ -147,17 +153,20 @@ public class DebugInterfaceActivity extends SessionActivity {
 		if (PermissionHandler.checkAccessReceiveSms(getApplicationContext())) { Log.i("permissions", "ReceiveSms enabled."); } else { Log.e("permissions", "ReceiveSms disabled."); }
 		if (PermissionHandler.checkAccessRecordAudio(getApplicationContext())) { Log.i("permissions", "RecordAudio enabled."); } else { Log.e("permissions", "RecordAudio disabled."); }
 	}
-	
+
 	public void clearInternalLog(View view) { TextFileManager.getDebugLogFile().deleteSafely(); }
 	public void getKeyFile(View view) { Log.i("DEBUG", "key file data: " + TextFileManager.getKeyFile().read()); }
-	
-	
+
+
 	//network operations
-	public void uploadDataFiles(View view) { PostRequest.uploadAllFiles(); }
+    public void uploadDataFiles(View view) {
+		getBlobContext().getUploadHelper().uploadAllFiles();
+    }
+
 	public void runSurveyDownload(View view) { SurveyDownloader.downloadSurveys(getBlobContext()); }
-	public void buttonTimer(View view) { backgroundService.startTimers(); }	
-	
-	
+	public void buttonTimer(View view) { backgroundService.startTimers(); }
+
+
 	//file operations
 	public void makeNewFiles(View view) { TextFileManager.makeNewFilesForEverything(); }
 	public void deleteEverything(View view) {
@@ -184,7 +193,7 @@ public class DebugInterfaceActivity extends SessionActivity {
 			SurveyNotifications.displaySurveyNotification(appContext, surveyId);
 		}
 	}
-	
+
 	//crash operations (No, really, we actually need this.)
 	public void crashUi(View view) { throw new NullPointerException("oops, you bwoke it."); }
 	public void crashBackground(View view) { BackgroundService.timer.setupExactSingleAlarm((long) 0, new Intent("crashBeiwe")); }

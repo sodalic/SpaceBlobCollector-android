@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import io.sodalic.blob.sharedui.BlobActivity;
 import org.beiwe.app.BackgroundService;
 import io.sodalic.blob.R;
 import org.beiwe.app.RunningBackgroundServiceActivity;
@@ -19,8 +20,9 @@ import org.beiwe.app.ui.user.LoginActivity;
  * This Activity also extends RunningBackgroundServiceActivity, which makes the app's key
  * services run before the interface is allowed to interact with it.
  * @author Eli Jones, Josh Zagorsky */
-public class SessionActivity extends RunningBackgroundServiceActivity {
-	
+//public class SessionActivity extends RunningBackgroundServiceActivity {
+public class SessionActivity extends BlobActivity {
+
 	/*####################################################################
 	########################## Log-in Logic ##############################
 	####################################################################*/

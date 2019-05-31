@@ -1,32 +1,23 @@
 package org.beiwe.app.networking;
 
-import android.content.Context;
-import android.util.Log;
-
-import io.sodalic.blob.BuildConfig;
-import org.beiwe.app.CrashHandler;
-import org.beiwe.app.DeviceInfo;
-import io.sodalic.blob.R;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.storage.SetDeviceSettings;
-import org.beiwe.app.storage.TextFileManager;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
+import android.content.Context;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import org.beiwe.app.CrashHandler;
+import org.beiwe.app.DeviceInfo;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.storage.SetDeviceSettings;
+import org.beiwe.app.storage.TextFileManager;
+import io.sodalic.blob.BuildConfig;
+import io.sodalic.blob.R;
 
 /** PostRequest is our class for handling all HTTP operations we need; they are all in the form of HTTP post requests. 
  * All HTTP connections are HTTPS, and automatically include a password and identifying information. 
@@ -42,61 +33,13 @@ public class PostRequest {
 	/** Simply runs the constructor, using the applcationContext to grab variables.  Idempotent. */
 	public static void initialize(Context applicationContext) { new PostRequest(applicationContext); }
 
-	private static final Object FILE_UPLOAD_LOCK = new Object() {}; //Our lock for file uploading
 
 	/*##################################################################################
 	 ##################### Publicly Accessible Functions ###############################
 	 #################################################################################*/
 
 
-	/**For use with Async tasks.
-	 * This opens a connection with the server, sends the HTTP parameters, then receives a response code, and returns it.
-	 * @param parameters HTTP parameters
-	 * @return serverResponseCode */
-	public static int httpRegister( String parameters, String url ) {
-		try {
-			return doRegisterRequest( parameters, new URL(url) ); }
-		catch (MalformedURLException e) {
-			Log.e("PostRequestFileUpload", "malformed URL");
-			e.printStackTrace(); 
-			return 0; }
-		catch (IOException e) {
-			e.printStackTrace();
-			Log.e("PostRequest","Network error: " + e.getMessage());
-			return 502; }
-	}
 
-    public static int httpRegisterFull(String parameters, String url, String password) {
-        try {
-            return doRegisterRequestEx(parameters, new URL(url), password);
-        } catch (MalformedURLException e) {
-            Log.e("PostRequestFileUpload", "malformed URL");
-            e.printStackTrace();
-            return 0;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("PostRequest", "Network error: " + e.getMessage());
-            return 502;
-        }
-    }
-
-	/**For use with Async tasks.
-	 * This opens a connection with the server, sends the HTTP parameters, then receives a response code, and returns it.
-	 * This function exists to resend registration data if we are using non anonymized hashing
-	 * @param parameters HTTP parameters
-	 * @return serverResponseCode */
-	public static int httpRegisterAgain( String parameters, String url ) {
-		try {
-			return doRegisterRequestSimple( parameters, new URL(url) ); }
-		catch (MalformedURLException e) {
-			Log.e("PostRequestFileUpload", "malformed URL");
-			e.printStackTrace();
-			return 0; }
-		catch (IOException e) {
-			e.printStackTrace();
-			Log.e("PostRequest","Network error: " + e.getMessage());
-			return 502; }
-	}
 
 	/**For use with Async tasks.
 	 * Makes an HTTP post request with the provided URL and parameters, returns the server's response code from that request
@@ -114,20 +57,7 @@ public class PostRequest {
 			return 502; }
 	}
 
-	/**For use with Async tasks.
-	 * Makes an HTTP post request with the provided URL and parameters, returns a string of the server's entire response. 
-	 * @param parameters HTTP parameters
-	 * @param urlString a string containing a url
-	 * @return a string of the contents of the return from an HTML request.*/
-	//TODO: Eli. low priority. investigate the android studio warning about making this a package local function
-	public static String httpRequestString(String parameters, String urlString)  {
-		try { return doPostRequestGetResponseString( parameters, urlString ); }
-		catch (IOException e) {
-			Log.e("PostRequest error", "Download File failed with exception: " + e);
-			e.printStackTrace();
-			throw new NullPointerException("Download File failed."); }
-	}
-	
+
 	/*##################################################################################
 	 ################################ Common Code ######################################
 	 #################################################################################*/
@@ -257,112 +187,6 @@ public class PostRequest {
 		return httpResponse;
 	}
 	
-
-	/** Constructs and sends a multipart HTTP POST request with a file attached.
-	 * This function uses minimalHTTP() directly because it needs to add a header (?) to the
-	 * HttpURLConnection object before it writes a file to it.
-	 * This function had performance issues with large files, these have been resolved by conversion
-	 * to use buffered file reads and http/tcp stream writes.
-	 * @param file the File to be uploaded
-	 * @param uploadUrl the destination URL that receives the upload
-	 * @return HTTP Response code as int
-	 * @throws IOException */
-	private static int doFileUpload(File file, URL uploadUrl, long stopTime) throws IOException {
-		if (file.length() >  1024*1024*10) { Log.i("upload", "file length: " + file.length() ); }
-		HttpURLConnection connection = minimalHTTP( uploadUrl );
-		BufferedOutputStream request = new BufferedOutputStream( connection.getOutputStream() , 65536);
-		BufferedInputStream inputStream = new BufferedInputStream( new FileInputStream(file) , 65536);
-
-		request.write( securityParameters(null).getBytes() );
-		request.write( makeParameter("file_name", file.getName() ).getBytes() );
-		request.write( "file=".getBytes() );
-//		long start = System.currentTimeMillis();
-		// Read in data from the file, and pour it into the POST request stream
-		int data;
-		int i = 0;
-		while ( ( data = inputStream.read() ) != -1 ) {
-			request.write((char) data);
-			i++;
-			//This check has been profiled, it causes no slowdown in upload speeds, and vastly improves upload behavior.
-			if (i % 65536 == 0 && stopTime<System.currentTimeMillis()) {
-				connection.disconnect();
-				return -1;
-			}
-		}
-//		long stop = System.currentTimeMillis();
-//		if (file.length() >  1024*1024*10) {
-//			Log.w("upload", "speed: " + (file.length() / ((stop - start) / 1000)) / 1024 + "KBps");
-//		}
-		inputStream.close();
-		request.write("".getBytes());
-		request.flush();
-		request.close();
-
-		// Get HTTP Response. Pretty sure this blocks, nothing can really be done about that.
-		int response = connection.getResponseCode();
-		connection.disconnect();
-		if (BuildConfig.APP_IS_DEV) { Log.d("uploading", "finished attempt to upload " +
-				file.getName() + "; received code " + response); }
-		return response;
-	}
-
-
-	//#######################################################################################
-	//################################## File Upload ########################################
-	//#######################################################################################
-
-
-	/** Uploads all available files on a separate thread. */
-	public static void uploadAllFiles() {
-		// determine if you are allowed to upload over WiFi or cellular data, return if not.
-		if ( !NetworkUtility.canUpload(appContext) ) { return; }
-
-		Log.i("DOING UPLOAD STUFF", "DOING UPLOAD STUFF");
-		// Run the HTTP POST on a separate thread
-		Thread uploaderThread = new Thread( new Runnable() {
-			@Override public void run() { doUploadAllFiles(); }
-		}, "uploader_thread");
-		uploaderThread.start();
-	}
-
-	/** Uploads all files to the Beiwe server.
-	 * Files get deleted as soon as a 200 OK code in received from the server. */
-	private static void doUploadAllFiles(){
-		synchronized (FILE_UPLOAD_LOCK) {
-			//long stopTime = System.currentTimeMillis() + PersistentData.getUploadDataFilesFrequencyMilliseconds();
-			long stopTime = System.currentTimeMillis() + 1000 * 60 * 60; //One hour to upload files
-			String[] files = TextFileManager.getAllUploadableFiles();
-			Log.i("uploading", "uploading " + files.length + " files");
-			File file = null;
-			URL uploadUrl = null; //set up url, write a crash log and fail gracefully if this ever breaks.
-			try {
-				uploadUrl = new URL(addWebsitePrefix(appContext.getResources().getString(R.string.data_upload_url)));
-			} catch (MalformedURLException e) {
-				CrashHandler.writeCrashlog(e, appContext);
-				return;
-			}
-
-			for (String fileName : TextFileManager.getAllUploadableFiles()) {
-				try {
-					file = new File(appContext.getFilesDir() + "/" + fileName);
-//				Log.d("uploading", "uploading " + file.getName());
-					if (PostRequest.doFileUpload(file, uploadUrl, stopTime) == 200) {
-						TextFileManager.delete(fileName);
-					}
-				} catch (IOException e) {
-					Log.w("PostRequest.java", "Failed to upload file " + fileName + ". Raised exception: " + e.getCause());
-				}
-
-				if (stopTime < System.currentTimeMillis()) {
-					Log.w("UPLOAD STUFF", "shutting down upload due to time limit, we should never reach this.");
-                    TextFileManager.getDebugLogFile().writeEncrypted(System.currentTimeMillis()+" upload time limit of 1 hr reached, there are likely files still on the phone that have not been uploaded." );
-					CrashHandler.writeCrashlog(new Exception("Upload took longer than 1 hour"), appContext);
-                    return;
-				}
-			}
-			Log.i("DOING UPLOAD STUFF", "DONE WITH UPLOAD");
-		}
-	}
 
 
 	//#######################################################################################

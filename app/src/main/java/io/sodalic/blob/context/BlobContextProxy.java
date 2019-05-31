@@ -6,6 +6,8 @@ import io.sodalic.blob.net.ServerApi;
 
 import java.util.Objects;
 
+import tracking.UploadHelper;
+
 /**
  * Proxy to the {@link BlobContext} that is expected to be used in most of the cases.
  * It works by getting the {@link BlobApp} using {@link Context#getApplicationContext()}
@@ -27,6 +29,7 @@ public final class BlobContextProxy implements BlobContext {
             return ((BlobApp) context).getBlobContext();
 
         Context appContext = context.getApplicationContext();
+        Objects.requireNonNull(appContext, "context.getApplicationContext()");
         return ((BlobApp) appContext).getBlobContext();
     }
 
@@ -47,6 +50,11 @@ public final class BlobContextProxy implements BlobContext {
     }
 
     @Override
+    public boolean isFullyInitialized() {
+        return blobContext.isFullyInitialized();
+    }
+
+    @Override
     public ServerApi getServerApi() {
         return blobContext.getServerApi();
     }
@@ -54,5 +62,10 @@ public final class BlobContextProxy implements BlobContext {
     @Override
     public void initServerApi(String serverUrl) {
         blobContext.initServerApi(serverUrl);
+    }
+
+    @Override
+    public UploadHelper getUploadHelper() {
+        return blobContext.getUploadHelper();
     }
 }
