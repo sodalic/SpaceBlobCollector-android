@@ -44,6 +44,7 @@ import org.beiwe.app.ui.user.AboutActivityLoggedOut;
  */
 public abstract class RunningBackgroundServiceActivity extends AppCompatActivity {
 	protected final String logTag = Utils.getLogTag(this.getClass());
+	protected final String TAG = logTag; //TODO SG: merge!
 
 
 	/** The backgroundService variable is an Activity's connection to the ... BackgroundService.
@@ -274,7 +275,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 		if (prePromptActive) { return; }
 		prePromptActive = true;
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Permissions Requirement:");
+		builder.setTitle(R.string.permission_request_title);
 		builder.setMessage(message);
 		builder.setOnDismissListener( new DialogInterface.OnDismissListener() { @Override public void onDismiss(DialogInterface dialog) {
 			activity.requestPermissions(new String[]{ permission }, permissionCallback );
@@ -289,7 +290,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 		if (postPromptActive) { return; }
 		postPromptActive = true;
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Permissions Requirement:");
+		builder.setTitle(R.string.permission_request_title);
 		builder.setMessage(message);
 		builder.setOnDismissListener( new DialogInterface.OnDismissListener() {
 			@Override

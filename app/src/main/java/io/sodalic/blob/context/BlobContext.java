@@ -2,6 +2,7 @@ package io.sodalic.blob.context;
 
 import android.content.Context;
 
+import io.sodalic.blob.face.FaceSightcorpApi;
 import io.sodalic.blob.tracking.UploadManager;
 
 import io.sodalic.blob.net.ServerApi;
@@ -36,5 +37,10 @@ public interface BlobContext {
     void initServerApi(String serverUrl);
 
     UploadManager getUploadManager();
+
+    /**
+     * This object provides an access to the face-recognition API.
+     */
+    FaceSightcorpApi getFaceApi();
 
 }

@@ -28,6 +28,10 @@
     <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <!-- Power management and monitoring, not sure where this would be used... -->
     <uses-permission android:name="android.permission.BATTERY_STATS" />
+
+    <!-- Both CAMERA and WRITE_EXTERNAL_STORAGE are used for Camera API-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     
     <application
         android:allowBackup="true"
@@ -106,6 +110,11 @@
             android:name="org.beiwe.app.ui.registration.ConsentFormActivity"
             android:label="@string/title_activity_consent_form"
             android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".ui.face.CaptureFaceActivity"
+                  android:label="@string/title_activity_capture_face"
+                  android:screenOrientation="portrait">
         </activity>
 
         <!-- SERVICE -->

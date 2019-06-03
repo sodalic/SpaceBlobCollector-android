@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <!--    <TextureView-->
+    <!--            android:id="@+id/camera_texture"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="center"-->
+    <!--    />-->
+
+    <io.sodalic.blob.ui.face.AutoFitTextureView
+            android:id="@+id/camera_texture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+    />
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+                android:id="@+id/submitButton"
+                android:text="@string/activity_capture_face_btn_take"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+        />
+        <Button
+                android:id="@+id/switch_camera"
+                android:text="@string/activity_capture_face_btn_switch_camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+        />
+    </LinearLayout>
+</FrameLayout>

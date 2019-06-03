@@ -7,11 +7,14 @@
     <string name="action_settings">Settings</string>
 	
     <!-- Permissions Strings -->
-    <string name="permission_registration_read_sms_alert"> In order to register for a study, SpaceBlob requires access to some this device\'s telephone services. Please press \"Allow\" when you see a menu requesting permissions to access SMS. Depending on the details of the study, you are allowed to disable this permission in the SpaceBlob app\'s preferences after registration is complete.</string>
+    <string name="permission_request_title">Permissions Requirement</string>
+    <string name="permission_camera_message">For this feature we need an access to camera and storage</string>
+    <string name="permission_failure_message">Failed because of denied Permission</string>
+    <string name="permission_registration_read_sms_alert">In order to register for a study, SpaceBlob requires access to some this device\'s telephone services. Please press \"Allow\" when you see a menu requesting permissions to access SMS. Depending on the details of the study, you are allowed to disable this permission in the SpaceBlob app\'s preferences after registration is complete.</string>
 
-    <string name="permission_registration_actually_need_sms_alert"> SpaceBlob requires SMS permissions in order to register for a study, but you appear to have denied it permission. We are going to bump you to the SpaceBlob app\'s settings so that you can manually enable SMS access. </string>
+    <string name="permission_registration_actually_need_sms_alert">SpaceBlob requires SMS permissions in order to register for a study, but you appear to have denied it permission. We are going to bump you to the SpaceBlob app\'s settings so that you can manually enable SMS access. </string>
 
-    <string name="power_management_exception_alert"> This permission prompt you are about to see is required to allow SpaceBlob to execute in the background. </string>
+    <string name="power_management_exception_alert">This permission prompt you are about to see is required to allow SpaceBlob to execute in the background. </string>
     <string name="cant_make_phone_call_alert_title">SpaceBlob can\'t initiate phone calls</string>
     <string name="cant_make_a_phone_call_permissions_alert">In order for SpaceBlob to initiate a phone call, you must go to Settings -> Permissions and grant the SpaceBlob app the \'Phone\' permission.\n\nOr, you can open the Phone app and make the phone call yourself.</string>
 
@@ -176,6 +179,7 @@
     <string name="menu_about">About This App</string>
     <string name="call_research_assistant">Call Research Assistant</string>
     <string name="view_survey_answers">View Survey Answers</string>
+    <string name="menu_take_picture">Take a Selfie</string>
     <string name="menu_show_debug">Show Debug Screen</string>
 
     <!-- About Page -->
@@ -196,6 +200,11 @@
         Goes\n
         Here.
     </string>
+
+    <!--- CaptureFaceActivity -->
+    <string name="title_activity_capture_face">Take a Selfie</string>
+    <string name="activity_capture_face_btn_take">Take</string>
+    <string name="activity_capture_face_btn_switch_camera">Switch camera</string>
 
     <!-- Survey Settings Keys -->
     <string name="randomize">randomize</string>

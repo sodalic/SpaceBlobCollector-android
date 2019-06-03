@@ -5,7 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 /**
- * Created by SergGr on 28.05.2019.
+ * A class with some generic utils methods
  */
 public final class Utils {
     private static final String TAG = getLogTag(Utils.class);

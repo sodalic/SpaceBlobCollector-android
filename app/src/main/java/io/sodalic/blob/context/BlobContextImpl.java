@@ -8,6 +8,8 @@ import android.util.Log;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
+
+import io.sodalic.blob.face.FaceSightcorpApi;
 import io.sodalic.blob.tracking.UploadManager;
 
 import org.beiwe.app.CrashHandler;
@@ -28,12 +30,14 @@ public class BlobContextImpl implements BlobContext {
 
     private ServerApi serverApi;
     private final UploadManager uploadManager;
+    private final FaceSightcorpApi faceApi;
 
 
     public BlobContextImpl(Context context) {
         Objects.requireNonNull(context, "context");
         rootContext = context;
         uploadManager = new UploadManager(this);
+        faceApi = new FaceSightcorpApi(BuildConfig.FACESIGHTCORP_API_KEY);
     }
 
     public void init() {
@@ -91,5 +95,10 @@ public class BlobContextImpl implements BlobContext {
     @Override
     public UploadManager getUploadManager() {
         return uploadManager;
+    }
+
+    @Override
+    public FaceSightcorpApi getFaceApi() {
+        return faceApi;
     }
 }

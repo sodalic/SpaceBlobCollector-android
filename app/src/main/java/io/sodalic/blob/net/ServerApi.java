@@ -29,7 +29,7 @@ import io.sodalic.blob.utils.Utils;
 public class ServerApi {
     private static final String TAG = Utils.getLogTag(ServerApi.class);
 
-    private static final int MAX_LOG_BODY_LEN = 1000;
+    public static final int MAX_LOG_BODY_LEN = 1000;
 
     // This is the media type used to describe our uploaded files
     // Let's use some fair description

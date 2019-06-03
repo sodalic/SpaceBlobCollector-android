@@ -2,6 +2,7 @@ package io.sodalic.blob.context;
 
 import android.content.Context;
 import io.sodalic.blob.BlobApp;
+import io.sodalic.blob.face.FaceSightcorpApi;
 import io.sodalic.blob.net.ServerApi;
 
 import java.util.Objects;
@@ -67,5 +68,10 @@ public final class BlobContextProxy implements BlobContext {
     @Override
     public UploadManager getUploadManager() {
         return blobContext.getUploadManager();
+    }
+
+    @Override
+    public FaceSightcorpApi getFaceApi() {
+        return blobContext.getFaceApi();
     }
 }

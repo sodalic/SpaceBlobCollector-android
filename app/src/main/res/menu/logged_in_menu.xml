@@ -10,6 +10,8 @@
           android:title="@string/menu_change_password" />
     <item android:id="@+id/view_survey_answers"
           android:title="@string/view_survey_answers" />
+    <item android:id="@+id/menu_take_picture"
+          android:title="@string/menu_take_picture" />
     <item android:id="@+id/menu_show_debug"
           android:title="@string/menu_show_debug" />
     <item android:id="@+id/menu_signout"

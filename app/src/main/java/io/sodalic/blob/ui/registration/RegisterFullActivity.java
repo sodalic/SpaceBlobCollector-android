@@ -304,7 +304,7 @@ public class RegisterFullActivity extends BlobActivity {
         }
         prePromptActive = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("Permissions Requirement:");
+        builder.setTitle(R.string.permission_request_title);
         builder.setMessage(R.string.permission_registration_read_sms_alert);
         builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override

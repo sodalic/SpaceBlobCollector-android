@@ -9,6 +9,7 @@ import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.sharedui.BlobActivity;
 import org.beiwe.app.BackgroundService;
 import io.sodalic.blob.R;
+import io.sodalic.blob.ui.face.CaptureFaceActivity;
 import org.beiwe.app.RunningBackgroundServiceActivity;
 import org.beiwe.app.storage.PersistentData;
 import org.beiwe.app.ui.DebugInterfaceActivity;
@@ -121,6 +122,9 @@ public class SessionActivity extends BlobActivity {
 			return true;
 		case R.id.view_survey_answers:
 			startActivity(new Intent(this, GraphActivity.class));
+			return true;
+		case R.id.menu_take_picture:
+			startActivity(new Intent(this, CaptureFaceActivity.class));
 			return true;
 		case R.id.menu_show_debug:
 			startActivity(new Intent(this, DebugInterfaceActivity.class));
