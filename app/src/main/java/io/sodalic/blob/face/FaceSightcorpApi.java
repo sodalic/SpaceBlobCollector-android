@@ -138,7 +138,7 @@ public class FaceSightcorpApi {
                 if (responseBody != null)
                     Log.w(TAG, StringUtils.formatEn("Bad response body = '%s'", responseBody.string()));
                 //TODO SG: user-friendly text
-                throw new FaceApiException(String.format("Bad response body = '%s'", responseBodyText));
+                throw new FaceApiException(String.format("FaceApi returned a bad response code = '%d'", code));
             }
             if (responseBody == null) {
                 // not an expected case
@@ -165,7 +165,7 @@ public class FaceSightcorpApi {
             if (errorCode != 0) {
                 Log.w(TAG, StringUtils.formatEn("Face api Response code = %d, desc = '%s'", errorCode, description));
                 //TODO SG: user-friendly text
-                throw new FaceApiException(String.format("Server returned a bad error code %d", errorCode));
+                throw new FaceApiException(String.format("Face API returned a bad error code %d", errorCode));
             }
             JSONArray people = responseRoot.getJSONArray("people");
             Log.i(TAG, "People length = " + people.length());

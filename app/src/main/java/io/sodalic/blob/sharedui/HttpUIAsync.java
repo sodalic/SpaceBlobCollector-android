@@ -10,6 +10,7 @@ import org.beiwe.app.ui.utils.AlertsManager;
 import io.sodalic.blob.R;
 import io.sodalic.blob.net.ServerException;
 import io.sodalic.blob.utils.StringUtils;
+import io.sodalic.blob.utils.UserFriendlyError;
 import io.sodalic.blob.utils.Utils;
 
 /**
@@ -18,14 +19,11 @@ import io.sodalic.blob.utils.Utils;
 public abstract class HttpUIAsync<Res> extends BaseHttpAsync<Res> {
 
     protected final BlobActivity activity;
-
     private final String customErrorTitle;
-
 
     private View progressView;
     private ProgressDialog progressDialog = null; // either progressView or progressDialog is null
     private Button submitButton;
-
 
     protected HttpUIAsync(@NonNull BlobActivity activity) {
         this(activity, null);
@@ -86,11 +84,7 @@ public abstract class HttpUIAsync<Res> extends BaseHttpAsync<Res> {
 
     @Override
     protected void handleError(@NonNull Exception ex) {
-        if (!(ex instanceof ServerException)) {
-            CrashHandler.writeCrashlog(ex, activity);
-            String errorTitle = getErrorTitle(activity.getString(R.string.error_title));
-            AlertsManager.showAlert(activity.getString(R.string.http_message_unknown_response_code), errorTitle, activity);
-        } else {
+        if (ex instanceof ServerException) {
             int responseCode = ((ServerException) ex).getResponseCode();
             String serverErrorTitle = getErrorTitle(activity.getString(R.string.server_error_title));
             if (responseCode != 0) {
@@ -98,6 +92,14 @@ public abstract class HttpUIAsync<Res> extends BaseHttpAsync<Res> {
             } else {
                 AlertsManager.showAlert(activity.getString(R.string.http_message_unknown_response_code), serverErrorTitle, activity);
             }
+        } else {
+            CrashHandler.writeCrashlog(ex, activity);
+            String errorTitle = getErrorTitle(activity.getString(R.string.error_title));
+            String errorMessage = activity.getString(R.string.http_message_unknown_response_code);
+            if (ex instanceof UserFriendlyError) {
+                errorMessage = ex.getMessage();
+            }
+            AlertsManager.showAlert(errorMessage, errorTitle, activity);
         }
     }
 
