@@ -42,6 +42,8 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
         Sentry.getContext().recordBreadcrumb(
                 new BreadcrumbBuilder().setMessage("Attempting application restart").build()
         );
+        // to track strange bug early in the app cycle, log all uncaughtExceptions locally as well
+        logCrashLocally(exception, errorHandlerContext);
         writeCrashlog(exception, errorHandlerContext);
 
         String toastMsg = exception.getMessage();
@@ -71,7 +73,6 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
         BlobContextProxy contextProxy = new BlobContextProxy(context);
         String serverUrl = contextProxy.isFullyInitialized() ? contextProxy.getServerApi().getBaseServerUrl() : PersistentData.getServerUrl();
 
-        logCrashLocally(exception, context);
         try {
             Sentry.getContext().addTag("user_id", PersistentData.getPatientID());
             Sentry.getContext().addTag("server_url", serverUrl);
