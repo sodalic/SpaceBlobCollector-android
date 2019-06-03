@@ -26,7 +26,7 @@ public abstract class HttpBgAsync extends BaseHttpAsync<Void> {
 
     @Override
     protected void handleError(@NonNull Exception ex) {
-        Log.w(logTag, "handleError", ex);
+        Log.w(TAG, "handleError", ex);
     }
 
 

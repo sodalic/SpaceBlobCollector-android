@@ -48,6 +48,7 @@ import io.sodalic.blob.storage.UserMood;
 import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.utils.ImageUtils;
 import io.sodalic.blob.utils.StringUtils;
+import io.sodalic.blob.utils.Utils;
 
 /**
  * The {@code Activity} that interacts with camera and captures user's face
@@ -56,6 +57,10 @@ import io.sodalic.blob.utils.StringUtils;
  * This is heavily copied from https://github.com/googlesamples/android-Camera2Basic
  */
 public class CaptureFaceActivity extends BlobActivity {
+    // this is a rare case when we need a static one so we have to duplicate it there
+    // because we can't inherit a static TAG.
+    private static final String STATIC_TAG = Utils.getLogTag(CaptureFaceActivity.class);
+
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
@@ -69,11 +74,6 @@ public class CaptureFaceActivity extends BlobActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-
-    /**
-     * Tag for the {@link Log}.
-     */
-    private static final String TAG = "Camera2BasicFragment";
 
     /**
      * Camera state: Showing camera preview.
@@ -439,7 +439,7 @@ public class CaptureFaceActivity extends BlobActivity {
         } else if (notBigEnough.size() > 0) {
             return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+            Log.e(STATIC_TAG, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }

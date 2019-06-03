@@ -43,8 +43,7 @@ import org.beiwe.app.ui.user.AboutActivityLoggedOut;
  * @author Eli Jones, Josh Zagorsky
  */
 public abstract class RunningBackgroundServiceActivity extends AppCompatActivity {
-	protected final String logTag = Utils.getLogTag(this.getClass());
-	protected final String TAG = logTag; //TODO SG: merge!
+	protected final String TAG = Utils.getLogTag(this.getClass());
 
 
 	/** The backgroundService variable is an Activity's connection to the ... BackgroundService.
@@ -86,7 +85,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 	@Override
 	protected void onCreate(Bundle bundle){
 		super.onCreate(bundle);
-        Log.i(logTag, "onCreate");
+        Log.i(TAG, "onCreate");
 		blobContext = new BlobContextProxy(this);
 
 		Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(getApplicationContext()));
@@ -101,7 +100,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 	 * actually running, we then bind to it so we can access program resources. */
 	protected void onResume() {
 		super.onResume();
-        Log.i(logTag, "onResume");
+        Log.i(TAG, "onResume");
 
 		Intent startingIntent = new Intent(this.getApplicationContext(), BackgroundService.class);
 		startingIntent.addFlags(Intent.FLAG_FROM_BACKGROUND);
@@ -115,7 +114,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 	 * memory leak warning (and probably an actual memory leak, too). */
 	protected void onPause() {
 		super.onPause();
-        Log.i(logTag, "onPause");
+        Log.i(TAG, "onPause");
 		activityNotVisible = true;
 		unbindService(backgroundServiceConnection);
 	}
@@ -224,7 +223,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(logTag, StringUtils.formatEn("onActivityResult req = %d, res = %d", requestCode, resultCode));
+        Log.i(TAG, StringUtils.formatEn("onActivityResult req = %d, res = %d", requestCode, resultCode));
 		aboutToResetFalseActivityReturn = true;
 	}
 

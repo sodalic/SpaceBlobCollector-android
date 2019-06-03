@@ -47,7 +47,7 @@ public class MainMenuActivity extends SessionActivity {
     protected void onResume() {
         super.onResume();
         UserMood lastMood = getBlobContext().getUserStateData().getLastMood();
-        Log.i(logTag, StringUtils.formatEn("Showing UI for mood %s", lastMood));
+        Log.i(TAG, StringUtils.formatEn("Showing UI for mood %s", lastMood));
         Drawable moodImage = getMoodImage(lastMood);
         moodImageView.setImageDrawable(moodImage);
     }

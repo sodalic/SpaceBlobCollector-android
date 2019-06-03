@@ -18,13 +18,13 @@ import io.sodalic.blob.context.BlobContext;
  */
 public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpAsync.ResultWrapper<Res>> {
 
-    protected final String logTag;
+    protected final String TAG;
     private final BlobContext blobContext;
 
     public BaseHttpAsync(@NonNull String logTag, @NonNull BlobContext blobContext) {
         Objects.requireNonNull(logTag, "logTag");
         Objects.requireNonNull(blobContext, "blobContext");
-        this.logTag = logTag;
+        this.TAG = logTag;
         this.blobContext = blobContext;
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
         updateUiAfter();
 
         if (resultWrapper.exception != null) {
-            Log.w(logTag, "Async error", resultWrapper.exception);
+            Log.w(TAG, "Async error", resultWrapper.exception);
             handleError(resultWrapper.exception);
         } else {
             handleSuccess(resultWrapper.result);
@@ -75,7 +75,7 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
     @Override
     protected void onCancelled() {
         super.onCancelled();
-        Log.i(logTag, "Task was cancelled");
+        Log.i(TAG, "Task was cancelled");
         updateUiAfter();
         handleCancelled();
     }

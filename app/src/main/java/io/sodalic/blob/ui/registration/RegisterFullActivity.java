@@ -114,7 +114,7 @@ public class RegisterFullActivity extends BlobActivity {
         String[] files = getFilesDir().list();
         for (String fn : files) {
             if (fn.contains("crashlog_")) {
-                Log.i(logTag, "Appending log from " + fn);
+                Log.i(TAG, "Appending log from " + fn);
                 String all = readAll(getFilesDir() + "/" + fn);
                 LinearLayout main = findViewById(R.id.registerActivityMain);
                 main.addView(new View(this), new LinearLayout.LayoutParams(MATCH_PARENT, 50)); // separator
