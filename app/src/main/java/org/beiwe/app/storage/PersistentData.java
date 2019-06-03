@@ -33,7 +33,7 @@ public class PersistentData {
 	private static final String PREF_NAME = "BeiwePref";
 	private static final String SERVER_URL_KEY = "serverUrl";
 	private static final String KEY_ID = "uid";
-	private static final String KEY_PASSWORD = "password";
+	private static final String KEY_PASSWORD_HASH = "password";
 	private static final String IS_REGISTERED = "IsRegistered";
 	private static final String LOGIN_EXPIRATION = "loginExpirationTimestamp";
 	private static final String PCP_PHONE_KEY = "primary_care";
@@ -140,7 +140,7 @@ public class PersistentData {
 	 * Hashes the password with {@link EncryptionEngine#safeHash(String)} and saves it to the local storage
 	 */
 	public static void savePasswordAsHash(String password){
-        editor.putString(KEY_PASSWORD, EncryptionEngine.safeHash(password));
+        editor.putString(KEY_PASSWORD_HASH, EncryptionEngine.safeHash(password));
         editor.commit();
     }
 
@@ -315,7 +315,7 @@ public class PersistentData {
         savePasswordAsHash(password);
 		editor.commit(); }
 
-	public static String getPasswordHash() { return pref.getString( KEY_PASSWORD, null ); }
+	public static String getPasswordHash() { return pref.getString(KEY_PASSWORD_HASH, null ); }
 	public static String getPatientID() { return pref.getString(KEY_ID, NULL_ID); }
 
 
