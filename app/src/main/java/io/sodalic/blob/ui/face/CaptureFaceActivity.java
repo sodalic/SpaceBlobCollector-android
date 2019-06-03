@@ -892,9 +892,22 @@ public class CaptureFaceActivity extends BlobActivity {
         protected FaceSightcorpApi.PersonFaceData doTask(BlobContext blobContext) throws Exception {
             // This is a necessary step as FaceSightcorp API fails on a non-rotated images
             // and on Android a typical portrait image is rotated by 90 degrees.
-            File rotatedImage = ImageUtils.normalizeImageFileRotation(imageFile);
-            FaceSightcorpApi.PersonFaceData faceData = blobContext.getFaceApi().analyzeImage(rotatedImage);
-            return faceData;
+            File rotatedImage = null;
+            try {
+                rotatedImage = ImageUtils.normalizeImageFileRotation(imageFile);
+                FaceSightcorpApi.PersonFaceData faceData = blobContext.getFaceApi().analyzeImage(rotatedImage);
+                return faceData;
+            } finally {
+                if(!BuildConfig.APP_IS_DEV) {
+                    Log.i(TAG, "Deleting image files");
+                    if (!imageFile.delete()) {
+                        Log.w(TAG, StringUtils.formatEn("Failed to delete image file '%s'", imageFile));
+                    }
+                    if((rotatedImage != null) && rotatedImage.exists() && !rotatedImage.delete()){
+                        Log.w(TAG, StringUtils.formatEn("Failed to delete rotated image file '%s'", rotatedImage));
+                    }
+                }
+            }
         }
 
         @Override
