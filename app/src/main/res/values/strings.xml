@@ -26,6 +26,10 @@
     <string name="title_activity_debug_interface">SpaceBlob debug interface</string>
     <string name="title_activity_survey">Survey</string>
 
+    <!-- Async tasks -->
+    <string name="async_progress_label">Processing…</string>
+
+
     <!-- Error Messages -->
     <string name="question_error_text">If you are reading this, something broke. Please contact the study administrators, and tell them that there is a bug in the survey!</string>
     <string name="invalid_device">This device does not meet minimum specifications for this app, to avoid any issues resulting from this please uninstall the app.</string>

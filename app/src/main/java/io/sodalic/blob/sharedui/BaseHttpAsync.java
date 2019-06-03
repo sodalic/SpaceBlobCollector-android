@@ -1,6 +1,7 @@
 package io.sodalic.blob.sharedui;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Objects;
@@ -11,6 +12,7 @@ import io.sodalic.blob.context.BlobContext;
 /**
  * Base class for our specific {@link AsyncTask} to wrap {@link io.sodalic.blob.net.ServerApi} requests.
  * You want to use one of the subclasses:
+ *
  * @see HttpUIAsync for requests from UI (that UI waits for)
  * @see HttpBgAsync for background requests
  */
@@ -19,7 +21,7 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
     protected final String logTag;
     private final BlobContext blobContext;
 
-    public BaseHttpAsync(String logTag, BlobContext blobContext) {
+    public BaseHttpAsync(@NonNull String logTag, @NonNull BlobContext blobContext) {
         Objects.requireNonNull(logTag, "logTag");
         Objects.requireNonNull(blobContext, "blobContext");
         this.logTag = logTag;
@@ -34,6 +36,17 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
         } catch (Exception ex) {
             return new ResultWrapper<>(ex);
         }
+    }
+
+    /**
+     * You may want to override the onPreExecute function (your pre-logic should occur outside
+     * the instantiation of the HTTPAsync instance), if you do you should call super.onPreExecute()
+     * as the first line in your custom logic. This is when the spinner will appear.
+     */
+    @Override
+    protected final void onPreExecute() {
+        super.onPreExecute();
+        updateUiBefore();
     }
 
     /**
@@ -54,12 +67,31 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
         }
     }
 
+    @Override
+    protected final void onCancelled(ResultWrapper<Res> resResultWrapper) {
+        super.onCancelled(resResultWrapper);
+    }
 
-    protected abstract Res doTask(BlobContext blobContext) throws Exception;
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        Log.i(logTag, "Task was cancelled");
+        updateUiAfter();
+        handleCancelled();
+    }
+
+    protected abstract Res doTask(@NonNull BlobContext blobContext) throws Exception;
 
     protected abstract void handleSuccess(Res result);
 
-    protected abstract void handleError(Exception ex);
+    protected abstract void handleError(@NonNull Exception ex);
+
+    protected void handleCancelled() {
+        // do nothing by default but can be overridden
+        // still updateUiAfter is executed anyway
+    }
+
+    protected abstract void updateUiBefore();
 
     protected abstract void updateUiAfter();
 
@@ -72,7 +104,7 @@ public abstract class BaseHttpAsync<Res> extends AsyncTask<Void, Void, BaseHttpA
             this.exception = null;
         }
 
-        ResultWrapper(Exception exception) {
+        ResultWrapper(@NonNull Exception exception) {
             Objects.requireNonNull(exception, "exception");
             this.result = null;
             this.exception = exception;

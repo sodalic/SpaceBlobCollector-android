@@ -1,6 +1,7 @@
 package io.sodalic.blob.sharedui;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import io.sodalic.blob.context.BlobContext;
 
@@ -9,8 +10,13 @@ import io.sodalic.blob.context.BlobContext;
  */
 public abstract class HttpBgAsync extends BaseHttpAsync<Void> {
 
-    protected HttpBgAsync(String baseTag, BlobContext blobContext) {
+    protected HttpBgAsync(@NonNull String baseTag, @NonNull BlobContext blobContext) {
         super("AsyncBg." + baseTag, blobContext);
+    }
+
+    @Override
+    protected final void updateUiBefore() {
+        // do nothing here
     }
 
     @Override
@@ -19,7 +25,7 @@ public abstract class HttpBgAsync extends BaseHttpAsync<Void> {
     }
 
     @Override
-    protected void handleError(Exception ex) {
+    protected void handleError(@NonNull Exception ex) {
         Log.w(logTag, "handleError", ex);
     }
 
@@ -29,13 +35,13 @@ public abstract class HttpBgAsync extends BaseHttpAsync<Void> {
     }
 
     @Override
-    protected final Void doTask(BlobContext blobContext) throws Exception {
+    protected final Void doTask(@NonNull BlobContext blobContext) throws Exception {
         // pass blobContext.getAppContext() as it is the only
         // safe choice in background task
         doTaskImpl(blobContext, blobContext.getAppContext());
         return null;
     }
 
-    protected abstract void doTaskImpl(BlobContext blobContext, Context appContext) throws Exception;
+    protected abstract void doTaskImpl(@NonNull BlobContext blobContext, @NonNull Context appContext) throws Exception;
 
 }
