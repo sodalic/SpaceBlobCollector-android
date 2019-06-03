@@ -5,12 +5,17 @@ import java.util.Objects;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import io.sodalic.blob.utils.Utils;
 
 /**
  * Class that provides access to a part of the user state
  * stored locally
  */
 public class UserStateData {
+    private static final String TAG = Utils.getLogTag(UserStateData.class);
+
     private static final String PREFERENCES_NAME = "SpaceBlob-UserData";
 
     private final SharedPreferencesWrapper prefs;
@@ -41,10 +46,11 @@ public class UserStateData {
 
     @NonNull
     public UserMood getLastMood() {
-
         long moment = prefs.getLong(MOOD_MOMENT_KEY, -1);
-        if (moment == -1)
+        if (moment == -1) {
+            Log.i(TAG, "Returning the default mood");
             return DEFAULT_MOOD;
+        }
 
         int mood = prefs.getInt(MOOD_MOOD_KEY, -1);
         int happiness = prefs.getInt(MOOD_HAPPINESS_KEY, -1);
@@ -56,17 +62,18 @@ public class UserStateData {
     }
 
     public void setLastMood(@NonNull UserMood userMood) {
+        Log.i(TAG, "Saving mood " + userMood);
         Objects.requireNonNull(userMood, "userMood");
-        SharedPreferences.Editor editor = prefs.getEditor();
+        SharedPreferences.Editor massEditor = prefs.getEditor();
 
-        prefs.putLong(MOOD_MOOD_KEY, userMood.moment);
-        prefs.putInt(MOOD_MOOD_KEY, userMood.mood);
-        prefs.putInt(MOOD_HAPPINESS_KEY, userMood.happiness);
-        prefs.putInt(MOOD_SURPRISE_KEY, userMood.surprise);
-        prefs.putInt(MOOD_ANGER_KEY, userMood.anger);
-        prefs.putInt(MOOD_FEAR_KEY, userMood.fear);
-        prefs.putInt(MOOD_SADNESS_KEY, userMood.sadness);
+        massEditor.putLong(MOOD_MOMENT_KEY, userMood.moment);
+        massEditor.putInt(MOOD_MOOD_KEY, userMood.mood);
+        massEditor.putInt(MOOD_HAPPINESS_KEY, userMood.happiness);
+        massEditor.putInt(MOOD_SURPRISE_KEY, userMood.surprise);
+        massEditor.putInt(MOOD_ANGER_KEY, userMood.anger);
+        massEditor.putInt(MOOD_FEAR_KEY, userMood.fear);
+        massEditor.putInt(MOOD_SADNESS_KEY, userMood.sadness);
 
-        editor.commit();
+        massEditor.commit();
     }
 }
