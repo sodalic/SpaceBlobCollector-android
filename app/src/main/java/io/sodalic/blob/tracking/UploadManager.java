@@ -13,6 +13,7 @@ import org.beiwe.app.storage.TextFileManager;
 import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.net.ServerException;
+import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 
 /**
@@ -74,7 +75,7 @@ public class UploadManager {
             for (int i = 0; i < files.length; i++) {
                 String fileName = files[i];
                 if (((i + 1) % 5 == 0) && (files.length > 10)) {
-                    Log.i(TAG, String.format("Uploading %d of %d", i + 1, files.length));
+                    Log.i(TAG, StringUtils.formatEn("Uploading %d of %d", i + 1, files.length));
                 }
 
                 if (!NetworkUtility.canUpload(appContext)) {
@@ -93,13 +94,14 @@ public class UploadManager {
 
                 if (stopTime < System.currentTimeMillis()) {
                     Log.w(TAG, "shutting down upload due to time limit, we should never reach this.");
-                    TextFileManager.getDebugLogFile().writeEncrypted(String.format("%d upload time limit of 1 hr since %d is reached %d of %d files, there are likely files still on the phone that have not been uploaded.",
+                    TextFileManager.getDebugLogFile().writeEncrypted(
+                            StringUtils.formatEn("%d upload time limit of 1 hr since %d is reached %d of %d files, there are likely files still on the phone that have not been uploaded.",
                             System.currentTimeMillis(), startTime, i, files.length));
-                    CrashHandler.writeCrashlog(new RuntimeException(String.format("Upload took longer than 1 hour for %d of %d files", i, files.length)), appContext);
+                    CrashHandler.writeCrashlog(new RuntimeException(StringUtils.formatEn("Upload took longer than 1 hour for %d of %d files", i, files.length)), appContext);
                     return;
                 }
             }
-            Log.i(TAG, String.format("DONE WITH UPLOAD of %d files", files.length));
+            Log.i(TAG, StringUtils.formatEn("DONE WITH UPLOAD of %d files", files.length));
         }
     }
 

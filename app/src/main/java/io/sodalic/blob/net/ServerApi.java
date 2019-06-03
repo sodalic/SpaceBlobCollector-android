@@ -46,7 +46,7 @@ public class ServerApi {
         Objects.requireNonNull(baseServerUrl);
         this.androidContext = androidContext;
         this.baseServerUrl = fixUrl(baseServerUrl);
-        Log.i(TAG, String.format("Init ServerApi for '%s' => '%s'", baseServerUrl, this.baseServerUrl));
+        Log.i(TAG, StringUtils.formatEn("Init ServerApi for '%s' => '%s'", baseServerUrl, this.baseServerUrl));
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         // enabling logging effectively means we are sharing it with the whole world
@@ -75,7 +75,7 @@ public class ServerApi {
      */
     private String sendSimplePost(String methodUrl, RequestBody requestBody) throws ServerException {
         final String fullUrl = baseServerUrl + methodUrl;
-        Log.i(TAG, String.format("Sending request to '%s'", fullUrl));
+        Log.i(TAG, StringUtils.formatEn("Sending request to '%s'", fullUrl));
         Request request = new Request.Builder()
                 .url(fullUrl)
                 .post(requestBody)
@@ -85,15 +85,15 @@ public class ServerApi {
             final ResponseBody responseBody = response.body();
             if (!response.isSuccessful()) {
                 int code = response.code();
-                Log.w(TAG, String.format("Bad response code = %d", code));
-                Log.w(TAG, String.format("Bad response body = '%s'", responseBody));
+                Log.w(TAG, StringUtils.formatEn("Bad response code = %d", code));
+                Log.w(TAG, StringUtils.formatEn("Bad response body = '%s'", responseBody));
                 if (responseBody != null)
-                    Log.w(TAG, String.format("Bad response body = '%s'", responseBody.string()));
+                    Log.w(TAG, StringUtils.formatEn("Bad response body = '%s'", responseBody.string()));
                 throw new ServerException(code);
             }
             if (responseBody == null) {
                 // not an expected case
-                Log.w(TAG, String.format("Response code = %d, body is empty", response.code()));
+                Log.w(TAG, StringUtils.formatEn("Response code = %d, body is empty", response.code()));
                 return null;
             } else {
                 String responseBodyText = responseBody.string();
@@ -270,7 +270,7 @@ public class ServerApi {
      * @param file file to upload onto the server
      */
     public void uploadFile(File file) throws ServerException {
-        Log.i(TAG, String.format("Uploading file '%s'", file.getName()));
+        Log.i(TAG, StringUtils.formatEn("Uploading file '%s'", file.getName()));
 
         MultipartBody.Builder multipartBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);

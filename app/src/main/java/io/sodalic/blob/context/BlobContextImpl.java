@@ -53,10 +53,10 @@ public class BlobContextImpl implements BlobContext {
         if (PersistentData.isRegistered()) {
             String serverUrl = PersistentData.getServerUrl();
             if (!StringUtils.isEmpty(serverUrl)) {
-                Log.i(TAG, String.format("Restoring ServerApi for '%s'", serverUrl));
+                Log.i(TAG, StringUtils.formatEn("Restoring ServerApi for '%s'", serverUrl));
                 initServerApi(serverUrl);
             } else {
-                Log.e(TAG, String.format("User is registered but serverUrl is empty. UserId = '%s'", PersistentData.getPatientID()));
+                Log.e(TAG, StringUtils.formatEn("User is registered but serverUrl is empty. UserId = '%s'", PersistentData.getPatientID()));
             }
         }
     }

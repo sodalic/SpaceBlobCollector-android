@@ -23,6 +23,7 @@ import io.sodalic.blob.R;
 
 import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.context.BlobContextProxy;
+import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
 import org.beiwe.app.storage.PersistentData;
@@ -222,7 +223,7 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(logTag, String.format("onActivityResult req = %d, res = %d", requestCode, resultCode));
+        Log.i(logTag, StringUtils.formatEn("onActivityResult req = %d, res = %d", requestCode, resultCode));
 		aboutToResetFalseActivityReturn = true;
 	}
 

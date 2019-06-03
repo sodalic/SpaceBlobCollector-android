@@ -1,5 +1,10 @@
 package io.sodalic.blob.utils;
 
+import java.util.Locale;
+
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+
 /**
  * Utility class with {@link String}-related methods
  */
@@ -48,4 +53,32 @@ public final class StringUtils {
         else
             return s;
     }
+
+    private static final Locale DEFAULT_FORMAT_LOCALE = Locale.US;
+
+    /**
+     * This method is a simple wrapper for {@link String#format(String, Object...)}
+     * that uses a fixed pre-defined {@link Locale} for formatting.
+     * <p>
+     * This method is expected to be used in various places where formatted strings
+     * are not supposed to be shown to user such as logging and where consistent
+     * string formatting is useful.
+     */
+    public static String formatEn(String formatString, Object... args) {
+        return String.format(DEFAULT_FORMAT_LOCALE, formatString, args);
+    }
+
+    /**
+     * This method attempts to get a user-friendly application name the will match
+     * what the user sees from the outside.
+     *
+     * @param context Any Android {@link Context}
+     * @return Application name String
+     */
+    public static String getApplicationName(Context context) {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    }
+
 }

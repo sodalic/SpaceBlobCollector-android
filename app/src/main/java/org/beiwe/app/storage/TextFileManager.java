@@ -10,23 +10,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.content.Context;
+import android.util.Log;
+
 import org.beiwe.app.CrashHandler;
-import org.beiwe.app.listeners.AccelerometerListener;
-import org.beiwe.app.listeners.BluetoothListener;
-import org.beiwe.app.listeners.CallLogger;
-import org.beiwe.app.listeners.GPSListener;
-import org.beiwe.app.listeners.PowerStateListener;
-import org.beiwe.app.listeners.SmsSentLogger;
-import org.beiwe.app.listeners.WifiListener;
+import org.beiwe.app.listeners.*;
 import org.beiwe.app.survey.AudioRecorderActivity;
 import org.beiwe.app.survey.AudioRecorderEnhancedActivity;
 import org.beiwe.app.survey.SurveyAnswersRecorder;
 import org.beiwe.app.survey.SurveyTimingsRecorder;
-
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
+import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 
 /**The (Text)FileManager.
@@ -370,7 +363,7 @@ public class TextFileManager {
 	 * @param fileName */
 	public static synchronized void delete(String fileName) {
 		try {
-			Log.i(TAG, String.format("Deleting file '%s'", fileName));
+			Log.i(TAG, StringUtils.formatEn("Deleting file '%s'", fileName));
 			appContext.deleteFile(fileName);
 		} catch (Exception e) {
 			Log.e("TextFileManager", "cannot delete file " + fileName);

@@ -9,6 +9,8 @@ import android.util.Log;
 import okhttp3.*;
 import okio.Buffer;
 
+import io.sodalic.blob.utils.StringUtils;
+
 /**
  * OkHttp interceptor that logs (almost) every request and response.
  * It should only be used in dev builds.
@@ -30,7 +32,7 @@ public class DebugLoggingInterceptor implements Interceptor {
 
         long t1 = System.nanoTime();
 
-        Log.i(TAG, String.format("Sending request %s on %s%n%s",
+        Log.i(TAG, StringUtils.formatEn("Sending request %s on %s%n%s",
                 request.url(), chain.connection(), request.headers()));
         RequestBody requestBody = request.body();
         // don't log file upload anyway!
@@ -52,7 +54,7 @@ public class DebugLoggingInterceptor implements Interceptor {
         Response response = chain.proceed(request);
 
         long t2 = System.nanoTime();
-        Log.i(TAG, String.format("Received response for %s in %.1fms%n%s",
+        Log.i(TAG, StringUtils.formatEn("Received response for %s in %.1fms%n%s",
                 response.request().url(), (t2 - t1) / 1e6d, response.headers()));
 
         return response;
