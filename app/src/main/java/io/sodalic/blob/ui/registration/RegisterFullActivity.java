@@ -105,7 +105,7 @@ public class RegisterFullActivity extends BlobActivity {
 
         // TODO SG: temporary code to track down a strange crash around registration that happened on May 31, 2019
         // see also logic in CrashHandler regarding logCrashLocally
-        if(BuildConfig.APP_IS_BETA){
+        if (BuildConfig.APP_IS_BETA) {
             addCrashReportFields();
         }
     }
@@ -196,6 +196,7 @@ public class RegisterFullActivity extends BlobActivity {
                 serverApi.sendRegisterFull(userName, password, studyId);
                 // save after success
                 PersistentData.setServerUrl(serverUrl);
+                blobContext.getUserStateData().setUserName(userName);
 
                 // Getting here means sendRegisterFull was successful
                 // If we are not using anonymized hashing, resubmit the phone identifying information

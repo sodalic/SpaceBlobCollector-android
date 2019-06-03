@@ -205,8 +205,6 @@ public class ServerApi {
             // TODO SG: We need to do it here because of the re-register scenario
             // that requires the authentication data
             PersistentData.setLoginCredentials(patientId, password);
-            PersistentData.setUserName(userName);
-
         } catch (JSONException e) {
             CrashHandler.writeCrashlog(e, androidContext);
             throw new ServerException(e);

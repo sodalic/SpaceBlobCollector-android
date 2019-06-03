@@ -34,7 +34,6 @@ public class PersistentData {
 	private static final String SERVER_URL_KEY = "serverUrl";
 	private static final String KEY_ID = "uid";
 	private static final String KEY_PASSWORD = "password";
-	private static final String KEY_USER_NAME = "userName";
 	private static final String IS_REGISTERED = "IsRegistered";
 	private static final String LOGIN_EXPIRATION = "loginExpirationTimestamp";
 	private static final String PCP_PHONE_KEY = "primary_care";
@@ -319,15 +318,6 @@ public class PersistentData {
 	public static String getPasswordHash() { return pref.getString( KEY_PASSWORD, null ); }
 	public static String getPatientID() { return pref.getString(KEY_ID, NULL_ID); }
 
-	public static String getUserName() {
-		return pref.getString(KEY_USER_NAME, null);
-	}
-
-	public static void setUserName(String userName) {
-		if (editor == null) Log.e("LoginManager.java", "editor is null in setUserName()");
-		editor.putString(KEY_USER_NAME, userName);
-		editor.commit();
-	}
 
 	/*###########################################################################################
 	#################################### Contact Numbers ########################################

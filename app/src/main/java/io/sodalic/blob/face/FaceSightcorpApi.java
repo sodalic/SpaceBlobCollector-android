@@ -2,6 +2,7 @@ package io.sodalic.blob.face;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.net.DebugLoggingInterceptor;
 import io.sodalic.blob.net.ServerApi;
+import io.sodalic.blob.storage.UserMood;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 
@@ -47,7 +49,11 @@ public class FaceSightcorpApi {
         okHttpClient = builder.build();
     }
 
+    /**
+     * This is an object representation of the main data returned by the API
+     */
     public static class PersonFaceData {
+        public final long moment;
         public final int age;
         public final int gender; //-100 to 100
         public final int mood; // 0 to 100
@@ -61,6 +67,7 @@ public class FaceSightcorpApi {
         public final int sadness;
 
         PersonFaceData(JSONObject personResponse) throws JSONException {
+            this.moment = System.currentTimeMillis();
             this.age = personResponse.getInt("age");
             this.gender = personResponse.getInt("gender");
             this.mood = personResponse.getInt("mood");
@@ -86,7 +93,14 @@ public class FaceSightcorpApi {
                     ", disgust=" + disgust +
                     ", fear=" + fear +
                     ", sadness=" + sadness +
+                    ", moment =" + new Date(moment).toString() +
                     '}';
+        }
+
+        @NonNull
+        public UserMood toUserMood() {
+            // this is what we use now, all the rest is ignored
+            return new UserMood(moment, mood, happiness, surprise, anger, fear, sadness);
         }
     }
 

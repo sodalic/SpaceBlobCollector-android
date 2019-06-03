@@ -10,6 +10,7 @@ import io.sentry.android.AndroidSentryClientFactory;
 import io.sentry.dsn.InvalidDsnException;
 
 import io.sodalic.blob.face.FaceSightcorpApi;
+import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.tracking.UploadManager;
 
 import org.beiwe.app.CrashHandler;
@@ -31,6 +32,7 @@ public class BlobContextImpl implements BlobContext {
     private ServerApi serverApi;
     private final UploadManager uploadManager;
     private final FaceSightcorpApi faceApi;
+    private final UserStateData userStateData;
 
 
     public BlobContextImpl(Context context) {
@@ -38,9 +40,12 @@ public class BlobContextImpl implements BlobContext {
         rootContext = context;
         uploadManager = new UploadManager(this);
         faceApi = new FaceSightcorpApi(BuildConfig.FACESIGHTCORP_API_KEY);
+        userStateData = new UserStateData(context);
+
+        init();
     }
 
-    public void init() {
+    private void init() {
         Log.i(TAG, "Context.init");
 
         try {
@@ -100,5 +105,10 @@ public class BlobContextImpl implements BlobContext {
     @Override
     public FaceSightcorpApi getFaceApi() {
         return faceApi;
+    }
+
+    @Override
+    public UserStateData getUserStateData() {
+        return userStateData;
     }
 }

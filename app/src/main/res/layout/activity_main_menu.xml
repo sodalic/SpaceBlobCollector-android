@@ -13,7 +13,7 @@
         android:id="@+id/main_menu_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/main_menu_top_message"
+        android:text="@string/main_menu_top_message_format_1"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_gravity="center" />
 
@@ -21,6 +21,11 @@
         android:id="@+id/Placeholder1"
         android:layout_width="wrap_content"
         android:layout_height="50dp" />
+
+    <ImageView
+            android:id="@+id/mood_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     <!--Button
         android:id="@+id/graph"

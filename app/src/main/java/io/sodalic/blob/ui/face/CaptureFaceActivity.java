@@ -44,6 +44,8 @@ import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.face.FaceSightcorpApi;
 import io.sodalic.blob.sharedui.BlobActivity;
 import io.sodalic.blob.sharedui.HttpUIAsync;
+import io.sodalic.blob.storage.UserMood;
+import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.utils.ImageUtils;
 import io.sodalic.blob.utils.StringUtils;
 
@@ -897,7 +899,9 @@ public class CaptureFaceActivity extends BlobActivity {
 
         @Override
         protected void handleSuccess(FaceSightcorpApi.PersonFaceData result) {
-            ((CaptureFaceActivity) activity).showToast(result.toString());
+            UserStateData userStateData = activity.getBlobContext().getUserStateData();
+            UserMood mood = result.toUserMood();
+            userStateData.setLastMood(mood);
             activity.finish();
         }
     }

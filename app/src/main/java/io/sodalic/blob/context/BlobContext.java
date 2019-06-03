@@ -3,6 +3,7 @@ package io.sodalic.blob.context;
 import android.content.Context;
 
 import io.sodalic.blob.face.FaceSightcorpApi;
+import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.tracking.UploadManager;
 
 import io.sodalic.blob.net.ServerApi;
@@ -32,10 +33,20 @@ public interface BlobContext {
      */
     boolean isFullyInitialized();
 
+    /**
+     * This object is used to access our server-side
+     */
     ServerApi getServerApi();
 
+    /**
+     * Initializes {@link ServerApi} returned by {@link #getServerApi()} with a given
+     * server URL. Util this call {@link #getServerApi()} returns {@code null}
+     */
     void initServerApi(String serverUrl);
 
+    /**
+     * Helper to upload tracked data files onto the server side
+     */
     UploadManager getUploadManager();
 
     /**
@@ -43,4 +54,9 @@ public interface BlobContext {
      */
     FaceSightcorpApi getFaceApi();
 
+
+    /**
+     * @return Object that handles access to locally stored user data
+     */
+    UserStateData getUserStateData();
 }

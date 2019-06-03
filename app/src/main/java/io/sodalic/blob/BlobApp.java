@@ -12,14 +12,15 @@ import io.sodalic.blob.utils.Utils;
 public class BlobApp extends Application {
     private static final String TAG = Utils.getLogTag(BlobApp.class);
 
-    private final BlobContextImpl blobContext = new BlobContextImpl(this);
+    private BlobContextImpl blobContext;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "onCreate");
-        blobContext.init();
+        // create only here because until this moment getBaseContext() is not initialized yet
+        blobContext = new BlobContextImpl(this);
     }
 
 

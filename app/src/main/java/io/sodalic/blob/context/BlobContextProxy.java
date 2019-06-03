@@ -7,6 +7,7 @@ import io.sodalic.blob.net.ServerApi;
 
 import java.util.Objects;
 
+import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.tracking.UploadManager;
 
 /**
@@ -73,5 +74,10 @@ public final class BlobContextProxy implements BlobContext {
     @Override
     public FaceSightcorpApi getFaceApi() {
         return blobContext.getFaceApi();
+    }
+
+    @Override
+    public UserStateData getUserStateData() {
+        return blobContext.getUserStateData();
     }
 }
