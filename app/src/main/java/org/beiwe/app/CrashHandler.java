@@ -1,13 +1,13 @@
 package org.beiwe.app;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,13 +18,18 @@ import io.sentry.event.BreadcrumbBuilder;
 import org.beiwe.app.storage.PersistentData;
 import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.context.BlobContextProxy;
+import io.sodalic.blob.storage.KnownDirs;
+import io.sodalic.blob.utils.StringUtils;
+import io.sodalic.blob.utils.Utils;
 
 public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
+    private static final String TAG = Utils.getLogTag(CrashHandler.class);
+
     private final Context errorHandlerContext;
     private int millisecondsUntilRestart = 500;
 
     public CrashHandler(Context context) {
-        this.errorHandlerContext = context;
+        errorHandlerContext = context;
     }
 
     /**
@@ -56,11 +61,60 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
         PendingIntent restartServicePendingIntent = PendingIntent.getService(errorHandlerContext, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmService = (AlarmManager) errorHandlerContext.getSystemService(Context.ALARM_SERVICE);
         alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + millisecondsUntilRestart, restartServicePendingIntent);
+
+        saveLogCat(errorHandlerContext);
+
         //exit beiwe
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
     }
 
+    private static File getLogCatFile(Context context, boolean createDir) {
+        return new File(KnownDirs.getCrashLogDir(context, createDir), "logcat.txt");
+    }
+
+    public static File getLogCatFile(Context context) {
+        return getLogCatFile(context, false);
+    }
+
+    private static void saveLogCat(Context context) {
+        File outputFile = getLogCatFile(context, true);
+        Log.i(TAG, StringUtils.formatEn("Saving logcat to '%s'", outputFile));
+
+        try {
+            Runtime.getRuntime().exec("logcat -f " + outputFile.getAbsolutePath());
+        } catch (IOException e) {
+            // ignore
+            Log.w(TAG, "Failed to save logcat", e);
+        }
+    }
+
+    public static void deleteCrashLog(Context context) {
+        File logCatFile = getLogCatFile(context, false);
+        Log.i(TAG, StringUtils.formatEn("Deleting logcat '%s', exists = %s", logCatFile, Boolean.toString(logCatFile.exists())));
+        if (logCatFile.exists()) {
+            if (!logCatFile.delete()) {
+                Log.w(TAG, StringUtils.formatEn("Failed to delete logcat '%s'", logCatFile));
+            }
+        }
+    }
+
+    public static void trySendCrashLogEmail(Activity activity) {
+        Log.i(TAG, "Try to send log e-mail");
+        File logCatFile = getLogCatFile(activity);
+        //send file using email
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        // Set type to "email"
+        emailIntent.setType("vnd.android.cursor.dir/email");
+        String to[] = {BuildConfig.CRASH_LOG_EMAIL};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+        // the attachment
+        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logCatFile));
+        // the mail subject
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sodalic Crash Log");
+        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(Intent.createChooser(emailIntent, "Send crash log email..."));
+    }
 
     /**
      * Creates a crash log file that will be uploaded at the next upload event.
@@ -90,44 +144,18 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
                 + ", Brand:" + DeviceInfo.getBrand()
                 + ", HardwareId:" + DeviceInfo.getHardwareId()
                 + ", Manufacturer:" + DeviceInfo.getManufacturer()
-                + ", Model:" + DeviceInfo.getModel() + "\n";
+                + ", Model:" + DeviceInfo.getModel() + "\n\n";
 
-        exceptionInfo += "Error message: " + exception.getMessage() + "\n";
-        exceptionInfo += "Error type: " + exception.getClass() + "\n";
-
-        if (exception.getSuppressed().length > 0) {
-            for (Throwable throwable : exception.getSuppressed()) {
-                exceptionInfo += "\nSuppressed Error:\n";
-                for (StackTraceElement element : throwable.getStackTrace()) {
-                    exceptionInfo += "\t" + element.toString() + "\n";
-                }
-            }
+        StringWriter buf = new StringWriter();
+        try (PrintWriter printWriter = new PrintWriter(buf)) {
+            exception.printStackTrace(printWriter);
         }
+        exceptionInfo += buf.toString();
 
-        //We encountered an error exactly once where we had a null reference inside this function,
-        // this occurred when downloading a new survey to test that randomized surveys worked,
-        // crashed with a null reference error on an element of a stacktrace. We now check for null.
-        if (exception.fillInStackTrace().getStackTrace() != null) {
-            exceptionInfo += "\nError-fill:\n";
-            for (StackTraceElement element : exception.fillInStackTrace().getStackTrace()) {
-                exceptionInfo += "\t" + element.toString() + "\n";
-            }
-        } else {
-            exceptionInfo += "java threw an error with an error-fill stack trace that was null.";
-        }
-
-        if (exception.getCause() != null && exception.getCause().getStackTrace() != null) {
-            exceptionInfo += "\nActual Error:\n";
-            for (StackTraceElement element : exception.getCause().getStackTrace()) {
-                exceptionInfo += "\t" + element.toString() + "\n";
-            }
-        } else {
-            exceptionInfo += "java threw an error with a null error cause or stack trace, this means we are manually creating a crash report.";
-        }
 
         //Print an error log if debug mode is active.
         if (BuildConfig.APP_IS_BETA) {
-            Log.e("BEIWE ENCOUNTERED THIS ERROR", exceptionInfo); //Log error...
+            Log.e(TAG, "Crash error details:\n" + exceptionInfo); //Log error...
         }
 
         FileOutputStream outStream; //write a file...
@@ -137,10 +165,10 @@ public class CrashHandler implements java.lang.Thread.UncaughtExceptionHandler {
             outStream.flush();
             outStream.close();
         } catch (FileNotFoundException e) {
-            Log.e("Error Handler Failure", "Could not write to file, file DNE.");
+            Log.e(TAG, "Could not write to file, file DNE.", e);
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("Error Handler Failure", "Could not write to file, IOException.");
+            Log.e(TAG, "Could not write to file, IOException.", e);
             e.printStackTrace();
         }
     }

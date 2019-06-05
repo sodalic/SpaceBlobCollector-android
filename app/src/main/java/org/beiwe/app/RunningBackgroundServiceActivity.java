@@ -4,11 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -19,15 +15,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
+import org.beiwe.app.storage.PersistentData;
+import org.beiwe.app.ui.user.AboutActivityLoggedOut;
+import io.sodalic.blob.BuildConfig;
 import io.sodalic.blob.R;
-
 import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.context.BlobContextProxy;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
-import org.beiwe.app.BackgroundService.BackgroundServiceBinder;
-import org.beiwe.app.storage.PersistentData;
-import org.beiwe.app.ui.user.AboutActivityLoggedOut;
 
 /**All Activities in the app extend this Activity.  It ensures that the app's key services (i.e.
  * BackgroundService, LoginManager, PostRequest, DeviceInfo, and WifiListener) are running before
@@ -144,6 +140,17 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 		return true;
 	}
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean crashLogVisible = false;
+        if (BuildConfig.APP_IS_BETA) {
+            crashLogVisible = CrashHandler.getLogCatFile(this).exists();
+        }
+        menu.findItem(R.id.menu_send_crash_log).setVisible(crashLogVisible);
+        menu.findItem(R.id.menu_delete_crash_log).setVisible(crashLogVisible);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
 
 	@Override
 	/** Common UI element, items in menu.*/
@@ -154,6 +161,12 @@ public abstract class RunningBackgroundServiceActivity extends AppCompatActivity
 		switch (item.getItemId()) {
 		case R.id.menu_about:
 			startActivity(new Intent(this, AboutActivityLoggedOut.class));
+			return true;
+		case R.id.menu_send_crash_log:
+			CrashHandler.trySendCrashLogEmail(this);
+			return true;
+		case R.id.menu_delete_crash_log:
+			CrashHandler.deleteCrashLog(this);
 			return true;
 		case R.id.menu_call_clinician:
 			callClinician(null);

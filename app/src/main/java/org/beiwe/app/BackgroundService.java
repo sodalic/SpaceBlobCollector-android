@@ -82,7 +82,8 @@ public class BackgroundService extends Service {
     }
 
     public void doSetup() {
-        //Accelerometer and power state don't need permissons
+        Log.i(TAG, "doSetup start");
+        //Accelerometer and power state don't need permissions
         startPowerStateListener();
         gpsListener = new GPSListener(appContext); // Permissions are checked in the broadcast receiver
         WifiListener.initialize(appContext);
@@ -110,6 +111,7 @@ public class BackgroundService extends Service {
             DeviceInfo.initialize(appContext); //if at registration this has already been initialized. (we don't care.)
             startTimers();
         }
+        Log.i(TAG, "doSetup end");
     }
 
     /**
@@ -229,6 +231,7 @@ public class BackgroundService extends Service {
         for (String surveyId : surveyIds) {
             filter.addAction(surveyId);
         }
+        Log.i(TAG, "Registering the tracking receiver");
         appContext.registerReceiver(localHandle.timerReceiver, filter);
     }
 	
@@ -353,6 +356,7 @@ public class BackgroundService extends Service {
 
             /** Disable active sensor */
             if (broadcastAction.equals(appContext.getString(R.string.turn_accelerometer_off))) {
+                Log.i(TAG, "accelerometerListener = " + accelerometerListener);
                 accelerometerListener.turn_off();
                 return;
             }

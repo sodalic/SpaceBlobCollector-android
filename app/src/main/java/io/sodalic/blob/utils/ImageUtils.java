@@ -106,43 +106,4 @@ public final class ImageUtils {
 
         return rotatedImageFile;
     }
-
-
-    /**
-     * @param context      - any Android {@link Context}
-     * @param ensureExists - if {@code true}, then the directory will also be created. Note that it means that
-     *                     it expects that {@link Manifest.permission#WRITE_EXTERNAL_STORAGE} permission
-     *                     has already been granted.
-     * @return Returns a {@link File} pointing to a directory to put temporary images such as selfie images saved
-     * for further processing.
-     * Note that in the {@link BuildConfig#APP_IS_DEV} this is a publicly available folder
-     * and otherwise it is a usual application-data folder
-     */
-    @NonNull
-    public static File getTempImageDir(@NonNull Context context, boolean ensureExists) {
-        File dir;
-        if (BuildConfig.APP_IS_DEV) {
-            File baseDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_PICTURES);
-            dir = new File(baseDir, StringUtils.getApplicationName(context));
-        } else {
-            File baseDir = context.getExternalFilesDir(null);
-            dir = new File(baseDir, "face");
-        }
-        if (ensureExists && !dir.exists() && !dir.mkdirs()) {
-            // should never happen in the real life
-            Log.e(TAG, StringUtils.formatEn("Failed to make the image directory '%s'", dir));
-            throw new RuntimeException(StringUtils.formatEn("Failed to make the image directory '%s'", dir));
-        }
-        return dir;
-    }
-
-    /**
-     * The same as {@link #getTempImageDir(Context, boolean)} with {@code ensureExists = true}.
-     * It means this call expects that {@link Manifest.permission#WRITE_EXTERNAL_STORAGE} permission
-     * has already been granted.
-     */
-    public static File getTempImageDir(@NonNull Context context) {
-        return getTempImageDir(context, true);
-    }
-
 }

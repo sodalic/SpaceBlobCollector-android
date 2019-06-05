@@ -44,6 +44,7 @@ import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.face.FaceSightcorpApi;
 import io.sodalic.blob.sharedui.BlobActivity;
 import io.sodalic.blob.sharedui.HttpUIAsync;
+import io.sodalic.blob.storage.KnownDirs;
 import io.sodalic.blob.storage.UserMood;
 import io.sodalic.blob.storage.UserStateData;
 import io.sodalic.blob.utils.ImageUtils;
@@ -362,7 +363,7 @@ public class CaptureFaceActivity extends BlobActivity {
         });
 
 
-        File dir = ImageUtils.getTempImageDir(this);
+        File dir = KnownDirs.getTempImageDir(this);
         String fileName = StringUtils.formatEn("face_pic_%d.jpg", System.currentTimeMillis());
         mFile = new File(dir, fileName);
     }

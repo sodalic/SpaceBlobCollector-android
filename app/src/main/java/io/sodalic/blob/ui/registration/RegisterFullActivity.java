@@ -1,9 +1,6 @@
 package io.sodalic.blob.ui.registration;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -18,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
+import org.beiwe.app.CrashHandler;
 import org.beiwe.app.DeviceInfo;
 import org.beiwe.app.PermissionHandler;
 import org.beiwe.app.storage.PersistentData;
@@ -30,6 +28,7 @@ import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.sharedui.BlobActivity;
 import io.sodalic.blob.sharedui.HttpUIAsync;
+import io.sodalic.blob.storage.KnownDirs;
 import io.sodalic.blob.utils.Utils;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -55,6 +54,8 @@ public class RegisterFullActivity extends BlobActivity {
 
     private final static int PERMISSION_CALLBACK = 0; //This callback value can be anything, we are not really using it
     private final static int REQUEST_PERMISSIONS_IDENTIFIER = 1500;
+
+    private boolean sendLogWasShown = false;
 
     /**
      * Users will go into this activity first to register information on the phone and on the server.
@@ -111,11 +112,14 @@ public class RegisterFullActivity extends BlobActivity {
     }
 
     private void addCrashReportFields() {
-        String[] files = getFilesDir().list();
+        File dir = KnownDirs.getTrackingFilesDir(this, false);
+        if (!dir.exists())
+            return;
+        String[] files = dir.list();
         for (String fn : files) {
             if (fn.contains("crashlog_")) {
                 Log.i(TAG, "Appending log from " + fn);
-                String all = readAll(getFilesDir() + "/" + fn);
+                String all = readAll(new File(dir, fn));
                 LinearLayout main = findViewById(R.id.registerActivityMain);
                 main.addView(new View(this), new LinearLayout.LayoutParams(MATCH_PARENT, 50)); // separator
                 TextView tv = new TextView(this);
@@ -126,9 +130,9 @@ public class RegisterFullActivity extends BlobActivity {
         }
     }
 
-    private static String readAll(String fileName) {
+    private static String readAll(File file) {
         StringBuilder res = new StringBuilder();
-        try (BufferedReader ir = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)))) {
+        try (BufferedReader ir = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String line;
             while (null != (line = ir.readLine())) {
                 res.append(line);
@@ -262,6 +266,10 @@ public class RegisterFullActivity extends BlobActivity {
                 showPrePermissionAlert(this);
             }
         }
+        if (BuildConfig.APP_IS_BETA && CrashHandler.getLogCatFile(this).exists() && !sendLogWasShown) {
+            sendLogWasShown = true;
+            CrashHandler.trySendCrashLogEmail(this);
+        }
     }
 
     @Override
@@ -269,8 +277,6 @@ public class RegisterFullActivity extends BlobActivity {
         super.onPause();
         activityNotVisible = true;
     }
-
-    ;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

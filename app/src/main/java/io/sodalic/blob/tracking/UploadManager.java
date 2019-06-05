@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Objects;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.util.Log;
 
 import org.beiwe.app.CrashHandler;
@@ -13,6 +12,7 @@ import org.beiwe.app.storage.TextFileManager;
 import io.sodalic.blob.context.BlobContext;
 import io.sodalic.blob.net.ServerApi;
 import io.sodalic.blob.net.ServerException;
+import io.sodalic.blob.storage.KnownDirs;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 
@@ -62,7 +62,7 @@ public class UploadManager {
     private void doUploadAllFiles() {
         final Context appContext = blobContext.getAppContext();
         final ServerApi serverApi = blobContext.getServerApi();
-        final ConnectivityManager connectivityManager = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final File baseDir = KnownDirs.getTrackingFilesDir(appContext, false);
 
         final long startTime = System.currentTimeMillis();
         final long stopTime = startTime + 1000 * 60 * 60; //One hour to upload files
@@ -83,7 +83,11 @@ public class UploadManager {
                     return;
                 }
 
-                File file = new File(appContext.getFilesDir() + "/" + fileName);
+                File file = new File(baseDir + "/" + fileName);
+                if (!file.exists()) {
+                    Log.e(TAG, StringUtils.formatEn("Non-existent file '%s', full path '%s'", fileName, file));
+                    continue;
+                }
                 try {
                     serverApi.uploadFile(file);
                     // delete file only if there is no error in serverApi.uploadFile
@@ -96,7 +100,7 @@ public class UploadManager {
                     Log.w(TAG, "shutting down upload due to time limit, we should never reach this.");
                     TextFileManager.getDebugLogFile().writeEncrypted(
                             StringUtils.formatEn("%d upload time limit of 1 hr since %d is reached %d of %d files, there are likely files still on the phone that have not been uploaded.",
-                            System.currentTimeMillis(), startTime, i, files.length));
+                                    System.currentTimeMillis(), startTime, i, files.length));
                     CrashHandler.writeCrashlog(new RuntimeException(StringUtils.formatEn("Upload took longer than 1 hour for %d of %d files", i, files.length)), appContext);
                     return;
                 }

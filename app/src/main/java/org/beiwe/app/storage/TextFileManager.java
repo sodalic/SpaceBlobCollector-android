@@ -19,6 +19,7 @@ import org.beiwe.app.survey.AudioRecorderActivity;
 import org.beiwe.app.survey.AudioRecorderEnhancedActivity;
 import org.beiwe.app.survey.SurveyAnswersRecorder;
 import org.beiwe.app.survey.SurveyTimingsRecorder;
+import io.sodalic.blob.storage.KnownDirs;
 import io.sodalic.blob.utils.StringUtils;
 import io.sodalic.blob.utils.Utils;
 
@@ -387,7 +388,10 @@ public class TextFileManager {
 	/** Very simple function, exists to make any function that needs to grab all extant files thread-safe.
 	 * DO NOT USE THIS FUNCTION, USE getAllFilesSafely() INSTEAD.
 	 * @return a string array of all files in the app's file directory. */
-	public static synchronized String[] getAllFiles() { return appContext.getFilesDir().list(); }
+	public static synchronized String[] getAllFiles() {
+
+		return KnownDirs.getTrackingFilesDir(appContext,false).list();
+	}
 		
 	/** Returns all data that are not currently in use
 	 * @return String[] a list of file names */

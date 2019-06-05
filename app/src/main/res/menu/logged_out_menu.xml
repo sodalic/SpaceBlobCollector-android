@@ -6,4 +6,8 @@
           android:title="@string/call_research_assistant" />
     <item android:id="@+id/menu_about"
           android:title="@string/menu_about" />
+    <item android:id="@+id/menu_send_crash_log"
+          android:title="@string/menu_send_crash_log" />
+    <item android:id="@+id/menu_delete_crash_log"
+          android:title="@string/menu_delete_crash_log" />
 </menu>

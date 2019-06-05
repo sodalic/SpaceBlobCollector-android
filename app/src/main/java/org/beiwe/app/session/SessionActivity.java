@@ -94,6 +94,7 @@ public class SessionActivity extends BlobActivity {
 		else {
 			menu.findItem(R.id.menu_call_clinician).setVisible(false);
 		}
+
         if (!BuildConfig.APP_IS_BETA || (this instanceof DebugInterfaceActivity)) {
             menu.findItem(R.id.menu_show_debug).setVisible(false);
         }

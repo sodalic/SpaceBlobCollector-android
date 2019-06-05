@@ -24,6 +24,7 @@ android {
         buildConfigField("String", "DEFAULT_STUDY_ID", "\"" + keystoreProperties['defaultStudyId'] + "\"")
         buildConfigField("String", "DEFAULT_SERVER_URL", "\"" + keystoreProperties['defaultServerUrl'] + "\"")
         buildConfigField("String", "FACESIGHTCORP_API_KEY", "\"" + keystoreProperties['faceSightcorpApiKey'] + "\"")
+        buildConfigField("String", "CRASH_LOG_EMAIL", "\"" + keystoreProperties['crashLogEmail'] + "\"")
     }
     buildTypes {
         release {

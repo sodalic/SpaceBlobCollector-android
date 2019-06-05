@@ -180,6 +180,8 @@
     <string name="call_research_assistant">Call Research Assistant</string>
     <string name="view_survey_answers">View Survey Answers</string>
     <string name="menu_take_picture">Take a Selfie</string>
+    <string name="menu_send_crash_log">Send Crash Log</string>
+    <string name="menu_delete_crash_log">Delete Crash Log</string>
     <string name="menu_show_debug">Show Debug Screen</string>
 
     <!-- About Page -->
