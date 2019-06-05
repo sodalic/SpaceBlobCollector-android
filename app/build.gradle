@@ -20,7 +20,7 @@ android {
         targetSdkVersion 26
         versionCode 37       //TODO: update this version code for new releases
         versionName "0.0.1"  //TODO: update this version number for new releases
-        setProperty("archivesBaseName", "SpaceBlob-$versionName")
+        setProperty("archivesBaseName", "Sodalic-$versionName")
         buildConfigField("String", "DEFAULT_STUDY_ID", "\"" + keystoreProperties['defaultStudyId'] + "\"")
         buildConfigField("String", "DEFAULT_SERVER_URL", "\"" + keystoreProperties['defaultServerUrl'] + "\"")
         buildConfigField("String", "FACESIGHTCORP_API_KEY", "\"" + keystoreProperties['faceSightcorpApiKey'] + "\"")
@@ -61,7 +61,7 @@ android {
     productFlavors {
         googlePlayStore {
             dimension "customizableServerUrl"
-            manifestPlaceholders = [appName: "SpaceBlob"]
+            manifestPlaceholders = [appName: "Sodalic"]
             buildConfigField("boolean", "CUSTOMIZABLE_SERVER_URL", 'true')
             buildConfigField("boolean", "READ_TEXT_AND_CALL_LOGS", 'false')
         }
